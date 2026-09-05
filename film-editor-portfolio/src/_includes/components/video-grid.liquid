@@ -12,12 +12,12 @@ Usage: render "components/video-grid", projects: projects
     {% for cat in site.categories %}
     <button
       type="button"
-      class="filter-btn px-4 py-2 rounded-full text-xs sm:text-sm font-medium border transition-all duration-200 whitespace-nowrap flex-shrink-0
+      class="filter-btn px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold border transition-all duration-200 whitespace-nowrap flex-shrink-0
              {% if forloop.first %}
-               filter-btn--active bg-crimson border-crimson text-white font-semibold shadow-lg shadow-crimson/30
+               filter-btn--active bg-neon-yellow border-neon-yellow text-black shadow-yellow-sm
              {% else %}
-               bg-white/[0.04] border-white/10 text-gray-300
-               hover:border-white/30 hover:text-white
+               bg-black/60 border-white/15 text-gray-300
+               hover:border-neon-yellow/50 hover:text-white
              {% endif %}"
       data-category="{{ cat.value }}"
       aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
@@ -30,7 +30,7 @@ Usage: render "components/video-grid", projects: projects
     <!-- Result count -->
     <span
       id="filter-count"
-      class="ml-auto text-xs text-gray-400 font-medium hidden sm:inline-block whitespace-nowrap"
+      class="ml-auto text-xs text-neon-yellow font-semibold hidden sm:inline-block whitespace-nowrap"
       aria-live="polite"
       aria-atomic="true"
     >

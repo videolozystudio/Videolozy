@@ -264,25 +264,39 @@ INSERT INTO public.projects
   (title, description, category, video_provider, video_id, thumbnail_url, client_name, year, is_featured, sort_order)
 VALUES
   (
-    'India''s Got Latent — Show Edit',
-    'Official comedy show edit featuring fast multi-camera cuts, live audio balancing, and kinetic graphics.',
-    'commercial', 'youtube', 'VJ9VC9OqdAA',
-    'https://img.youtube.com/vi/VJ9VC9OqdAA/hqdefault.jpg',
-    'Samay Raina', 2024, TRUE, 1
+    'Videolozy Showcase Reel — Cinematic Edit',
+    'Official showcase video for Videolozy.in by lead editor Bhuvan Bhaskar. High-impact commercial and narrative edits featuring kinetic rhythm cuts, color grading, motion graphics, and sound design.',
+    'commercial', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/maxresdefault.jpg',
+    'Videolozy Showcase', 2024, TRUE, 1
   ),
   (
-    'Ye Dil Tum Bin Kahi — Romantic Narrative',
-    'A dreamlike romantic sequence cut to classic melody. Pacing and color grading tuned for deep emotional connection.',
-    'short-film', 'youtube', 'AGFlQ4ViDCA',
-    'https://img.youtube.com/vi/AGFlQ4ViDCA/hqdefault.jpg',
-    'Saregama Music', 2024, TRUE, 2
-  ),
-  (
-    'Meri Sanson Mein Basa Hai — Music Video',
-    'Official music video cut featuring Rahat Fateh Ali Khan & Kavya Limaye. Rhythm-driven cuts matched to vocal crescendo.',
-    'music-video', 'youtube', 'RLETBH5_NpY',
+    'Velocity — Nike Commercial',
+    'A high-energy 60-second commercial for Nike''s new Velocity running shoe line. Fast cuts, motion blur, and kinetic typography drive the narrative of speed and endurance.',
+    'commercial', 'youtube', 'RLETBH5_NpY',
     'https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg',
-    'Boundless Melodies', 2024, TRUE, 3
+    'Nike', 2024, TRUE, 2
+  ),
+  (
+    'Echoes — Narrative Music Video',
+    'Official music video cut for "Echoes". A dreamlike journey through memory and loss, cut to the rhythm of shifting time signatures.',
+    'music-video', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/sddefault.jpg',
+    'Luna Wave / Atlantic Records', 2023, TRUE, 3
+  ),
+  (
+    'Ocean Architects — Feature Documentary',
+    'Feature-length documentary following marine biologists building artificial reef structures off the coast of Indonesia. Narrated by David Attenborough.',
+    'documentary', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/maxresdefault.jpg',
+    'BBC Natural History Unit', 2023, FALSE, 4
+  ),
+  (
+    'Golden Hour — Luxury Brand Ad',
+    'A 30-second hero ad for the Aurum Chrono flagship timepiece. The edit mirrors the precision of the watch — every frame lands exactly on the beat.',
+    'commercial', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg',
+    'Aurum Timepieces', 2024, FALSE, 5
   )
 ON CONFLICT DO NOTHING;
 

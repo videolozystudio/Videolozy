@@ -26,10 +26,10 @@
       >
         <!-- Icon mark -->
         <div
-          class="w-9 h-9 rounded-lg bg-gradient-to-br from-crimson to-red-700 flex items-center justify-center
-                 shadow-lg shadow-crimson/30 group-hover:scale-105 transition-transform duration-300"
+          class="w-9 h-9 rounded-lg bg-gradient-to-br from-neon-yellow via-neon-red to-neon-red flex items-center justify-center
+                 shadow-yellow-sm group-hover:shadow-yellow transition-shadow duration-300"
         >
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 text-black font-extrabold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                   d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
           </svg>
@@ -37,10 +37,10 @@
 
         <!-- Wordmark -->
         <div class="leading-none">
-          <span class="block text-base font-bold text-white tracking-tight">
+          <span class="block text-base font-extrabold text-white tracking-tight">
             {{ site.brand }}
           </span>
-          <span class="block text-2xs text-gray-400 font-medium tracking-widest uppercase">
+          <span class="block text-2xs text-neon-yellow font-bold tracking-widest uppercase">
             {{ site.name }} · Post Studio
           </span>
         </div>
@@ -52,7 +52,7 @@
         <a
           href="{{ item.href }}"
           class="px-4 py-2 rounded-lg text-sm font-medium text-gray-300
-                 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                 hover:text-neon-yellow hover:bg-white/10 transition-colors duration-200"
         >
           {{ item.label }}
         </a>
@@ -61,7 +61,7 @@
         <!-- CTA -->
         <a
           href="mailto:{{ site.email }}"
-          class="ml-3 btn-crimson text-xs font-bold uppercase tracking-wider py-2 px-5"
+          class="ml-3 btn-yellow text-sm"
           id="header-cta"
         >
           Contact Us
@@ -97,7 +97,7 @@
       {% for item in site.nav %}
       <a
         href="{{ item.href }}"
-        class="px-4 py-3 rounded-lg text-sm font-medium text-gray-300
+        class="px-4 py-3 rounded-lg text-sm font-medium text-text-secondary
                hover:text-white hover:bg-white/6 transition-colors"
       >
         {{ item.label }}
@@ -105,9 +105,9 @@
       {% endfor %}
       <a
         href="mailto:{{ site.email }}"
-        class="mt-2 btn-crimson text-sm w-full justify-center"
+        class="mt-2 btn-neon text-sm w-full justify-center"
       >
-        Contact Us
+        Hire Me
       </a>
     </nav>
   </div>
