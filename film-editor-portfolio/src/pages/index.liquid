@@ -6,40 +6,43 @@ permalink: /
 ---
 
 <!-- ============================================================
-     HERO SECTION
+     HERO SECTION — Black, White, Neon Red & Neon Yellow Parallax
      ============================================================ -->
 <section
-  class="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
+  class="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-16 sm:py-24"
   aria-labelledby="hero-headline"
   id="hero"
 >
-  <!-- Animated background noise / grain effect -->
-  <div class="absolute inset-0 bg-gradient-dark"></div>
+  <!-- Background Layers -->
+  <div class="absolute inset-0 bg-void"></div>
 
-  <!-- Parallax Floating White Radial Glow Orbs & Light Beams -->
+  <!-- Multi-Layered Floating Parallax Ambient Orbs -->
+  <!-- Orb 1: Neon Yellow Orb Top Left -->
   <div
-    class="absolute top-1/4 left-10 w-96 h-96 rounded-full opacity-15 pointer-events-none animate-parallax-float animate-white-pulse"
-    style="background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 50%, transparent 80%);"
-    aria-hidden="true"
-  ></div>
-  <div
-    class="absolute bottom-1/4 right-12 w-[30rem] h-[30rem] rounded-full opacity-10 pointer-events-none animate-parallax-reverse animate-white-pulse"
-    style="background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,0,64,0.08) 50%, transparent 80%);"
+    class="absolute top-10 left-1/6 w-[28rem] h-[28rem] rounded-full opacity-25 pointer-events-none animate-parallax-float blur-3xl"
+    style="background: radial-gradient(circle, rgba(255,230,0,0.4) 0%, rgba(255,230,0,0.05) 55%, transparent 75%);"
     aria-hidden="true"
   ></div>
 
-  <!-- Neon & White Radial Glow Layer -->
+  <!-- Orb 2: Neon Red Orb Bottom Right -->
   <div
-    class="absolute inset-0 pointer-events-none"
+    class="absolute bottom-12 right-1/6 w-[32rem] h-[32rem] rounded-full opacity-25 pointer-events-none animate-parallax-reverse blur-3xl"
+    style="background: radial-gradient(circle, rgba(255,0,64,0.35) 0%, rgba(255,0,64,0.08) 55%, transparent 75%);"
     aria-hidden="true"
-    style="background: radial-gradient(ellipse 65% 55% at 50% 35%, rgba(255,255,255,0.04) 0%, rgba(255,0,64,0.07) 50%, transparent 80%);"
+  ></div>
+
+  <!-- Orb 3: Pure Crisp White Beam Top Right -->
+  <div
+    class="absolute top-1/3 right-1/4 w-80 h-80 rounded-full opacity-15 pointer-events-none animate-parallax-drift blur-2xl"
+    style="background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);"
+    aria-hidden="true"
   ></div>
 
   <!-- Grid overlay with subtle white grid lines -->
   <div
-    class="absolute inset-0 opacity-10 pointer-events-none animate-parallax-drift"
+    class="absolute inset-0 opacity-15 pointer-events-none animate-parallax-drift"
     aria-hidden="true"
-    style="background-image: linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px); background-size: 70px 70px;"
+    style="background-image: linear-gradient(rgba(255,255,255,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.14) 1px, transparent 1px); background-size: 60px 60px;"
   ></div>
 
   <!-- Hero Content -->
@@ -47,13 +50,13 @@ permalink: /
 
     <!-- Pre-headline chip -->
     <div
-      class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full
-             bg-neon-red/10 border border-neon-red/20 text-neon-red text-xs font-semibold
-             tracking-wider uppercase animate-fade-in"
+      class="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full
+             bg-black/70 border border-neon-yellow/50 text-neon-yellow text-xs font-bold
+             tracking-widest uppercase shadow-yellow-sm animate-fade-in"
       aria-label="Status: Available for work"
     >
-      <span class="w-1.5 h-1.5 rounded-full bg-neon-red animate-pulse"></span>
-      Available for Projects
+      <span class="w-2 h-2 rounded-full bg-neon-yellow animate-ping"></span>
+      <span>⚡ High-End Video Post-Production</span>
     </div>
 
     <!-- Main Headline -->
@@ -63,37 +66,39 @@ permalink: /
              animate-fade-in"
       style="animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards;"
     >
-      Every Frame
+      Crafting Visuals with
       <br />
-      <span class="neon-text">Tells a Story.</span>
+      <span class="bg-gradient-to-r from-white via-neon-yellow to-neon-red bg-clip-text text-transparent drop-shadow-lg">
+        Rhythm & Pacing.
+      </span>
     </h1>
 
     <!-- Tagline -->
     <p
-      class="max-w-2xl mx-auto text-lg sm:text-xl text-text-secondary leading-relaxed mb-10
+      class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 font-normal leading-relaxed mb-10
              animate-fade-in"
       style="animation-delay: 0.25s; opacity: 0; animation-fill-mode: forwards;"
     >
-      {{ site.tagline }}
+      {{ site.tagline }} — Led by founder <strong class="text-white">Bhuvan Bhaskar</strong>. Transforming raw footage into cinematic experiences with sound precision, color depth, and narrative impact.
     </p>
 
     <!-- CTA Buttons -->
     <div
-      class="flex flex-col sm:flex-row items-center justify-center gap-4
+      class="flex flex-col sm:flex-row items-center justify-center gap-5
              animate-fade-in"
       style="animation-delay: 0.4s; opacity: 0; animation-fill-mode: forwards;"
     >
-      <a href="#work" class="btn-neon text-base px-7 py-3 w-full sm:w-auto" id="hero-cta-work">
+      <a href="#work" class="btn-yellow text-base px-8 py-3.5 w-full sm:w-auto" id="hero-cta-work">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                 d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                 d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        View My Work
+        Explore Portfolio Reel
       </a>
-      <a href="mailto:{{ site.email }}" class="btn-outline text-base px-7 py-3 w-full sm:w-auto">
-        Get In Touch
+      <a href="mailto:{{ site.email }}" class="btn-neon text-base px-8 py-3.5 w-full sm:w-auto">
+        Start a Project
       </a>
     </div>
 
@@ -102,47 +107,48 @@ permalink: /
   <!-- Scroll indicator -->
   <div
     class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2
-           animate-float opacity-60"
+           animate-float opacity-70"
     aria-hidden="true"
   >
-    <span class="text-2xs text-text-muted font-medium tracking-widest uppercase">Scroll</span>
-    <div class="w-px h-8 bg-gradient-to-b from-text-muted to-transparent"></div>
+    <span class="text-2xs text-neon-yellow font-bold tracking-widest uppercase">Scroll Down</span>
+    <div class="w-px h-8 bg-gradient-to-b from-neon-yellow to-transparent"></div>
+  </div>
 </section>
 
 <!-- ============================================================
-     STATS SECTION
+     STATS SECTION — Crisp White Glass Panels with Neon Accents
      ============================================================ -->
-<section class="py-16 border-y border-border bg-surface/50" aria-label="Career statistics">
+<section class="py-16 border-y border-white/10 bg-surface/80 relative" aria-label="Career statistics">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
 
-      <div class="text-center stat-counter" data-target="120" data-suffix="+">
-        <p class="text-4xl sm:text-5xl font-black text-white mb-1">
-          <span class="counter-value">0</span><span class="text-neon-red">+</span>
+      <div class="stat-counter p-6 rounded-2xl white-glass-card text-center group hover:border-neon-yellow/50 transition-all duration-300" data-target="120" data-suffix="+">
+        <p class="text-4xl sm:text-5xl font-black text-neon-yellow mb-1 drop-shadow-md">
+          <span class="counter-value">0</span><span class="text-white">+</span>
         </p>
-        <p class="text-sm text-text-muted font-medium">Projects Completed</p>
+        <p class="text-xs sm:text-sm text-gray-300 font-semibold tracking-wide uppercase">Projects Completed</p>
       </div>
 
-      <div class="text-center stat-counter" data-target="{{ site.yearsActive }}" data-suffix="+">
-        <p class="text-4xl sm:text-5xl font-black text-white mb-1">
-          <span class="counter-value">0</span><span class="text-neon-red">+</span>
+      <div class="stat-counter p-6 rounded-2xl white-glass-card text-center group hover:border-neon-red/50 transition-all duration-300" data-target="{{ site.yearsActive }}" data-suffix="+">
+        <p class="text-4xl sm:text-5xl font-black text-neon-red mb-1 drop-shadow-md">
+          <span class="counter-value">0</span><span class="text-white">+</span>
         </p>
-        <p class="text-sm text-text-muted font-medium">Years Experience</p>
+        <p class="text-xs sm:text-sm text-gray-300 font-semibold tracking-wide uppercase">Years Experience</p>
       </div>
 
-      <div class="text-center stat-counter" data-target="50" data-suffix="+">
-        <p class="text-4xl sm:text-5xl font-black text-white mb-1">
-          <span class="counter-value">0</span><span class="text-neon-red">+</span>
+      <div class="stat-counter p-6 rounded-2xl white-glass-card text-center group hover:border-neon-yellow/50 transition-all duration-300" data-target="50" data-suffix="+">
+        <p class="text-4xl sm:text-5xl font-black text-neon-yellow mb-1 drop-shadow-md">
+          <span class="counter-value">0</span><span class="text-white">+</span>
         </p>
-        <p class="text-sm text-text-muted font-medium">Brands & Studios</p>
+        <p class="text-xs sm:text-sm text-gray-300 font-semibold tracking-wide uppercase">Brands & Studios</p>
       </div>
 
-      <div class="text-center stat-counter" data-target="8" data-suffix="">
-        <p class="text-4xl sm:text-5xl font-black text-white mb-1">
+      <div class="stat-counter p-6 rounded-2xl white-glass-card text-center group hover:border-neon-red/50 transition-all duration-300" data-target="8" data-suffix="">
+        <p class="text-4xl sm:text-5xl font-black text-neon-red mb-1 drop-shadow-md">
           <span class="counter-value">0</span>
-          <span class="text-neon-red">×</span>
+          <span class="text-white">×</span>
         </p>
-        <p class="text-sm text-text-muted font-medium">Award-Winning Work</p>
+        <p class="text-xs sm:text-sm text-gray-300 font-semibold tracking-wide uppercase">Award-Winning Edits</p>
       </div>
 
     </div>
@@ -153,28 +159,32 @@ permalink: /
      WORK / VIDEO GRID SECTION
      ============================================================ -->
 <section
-  class="py-20 lg:py-28"
+  class="py-20 lg:py-28 relative"
   id="work"
   aria-labelledby="work-heading"
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Background Glow -->
+  <div class="absolute top-1/2 left-10 w-96 h-96 rounded-full opacity-15 bg-neon-yellow blur-3xl pointer-events-none animate-parallax-float"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
     <!-- Section Header -->
     <div class="mb-12 lg:mb-16">
-      <p class="text-neon-red text-xs font-semibold tracking-widest uppercase mb-3">Portfolio</p>
+      <span class="yellow-pill-badge px-3.5 py-1 text-2xs font-bold uppercase tracking-widest mb-3 inline-block">
+        ⚡ PORTFOLIO & REELS
+      </span>
       <h2
         id="work-heading"
         class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight"
       >
         Selected Work
       </h2>
-      <p class="mt-4 text-text-secondary max-w-xl">
-        A curated selection of projects spanning commercials, narrative, music, and documentary.
+      <p class="mt-4 text-gray-300 max-w-xl text-base">
+        Explore a curated showcase of commercial campaigns, short narrative films, music videos, and feature documentaries.
       </p>
     </div>
 
-    <!-- Projects are fetched & rendered client-side from Supabase -->
-    <!-- The grid component below provides the filter UI + empty skeleton -->
+    <!-- Projects Grid Component -->
     {% include "components/video-grid.liquid" %}
 
   </div>
@@ -184,118 +194,97 @@ permalink: /
      ABOUT SECTION
      ============================================================ -->
 <section
-  class="py-20 lg:py-28 border-t border-border"
+  class="py-20 lg:py-28 border-t border-white/10 relative overflow-hidden bg-surface/40"
   id="about"
   aria-labelledby="about-heading"
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Parallax Floating Orbs -->
+  <div class="absolute -top-12 -right-12 w-96 h-96 rounded-full opacity-20 bg-neon-yellow blur-3xl animate-parallax-float pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
       <!-- Text Side -->
       <div>
-        <p class="text-neon-red text-xs font-semibold tracking-widest uppercase mb-3">About</p>
+        <span class="yellow-pill-badge px-3.5 py-1 text-2xs font-bold uppercase tracking-widest mb-4 inline-block">
+          ★ ABOUT VIDEOLOZY
+        </span>
         <h2
           id="about-heading"
           class="text-3xl sm:text-4xl font-bold text-white leading-tight mb-6"
         >
-          The Editor Behind
-          <br />the <span class="neon-text">Cut.</span>
+          The Studio Behind
+          <br />the <span class="bg-gradient-to-r from-neon-yellow to-neon-red bg-clip-text text-transparent">Master Cut.</span>
         </h2>
-        <div class="space-y-4 text-text-secondary leading-relaxed">
+        <div class="space-y-4 text-gray-300 leading-relaxed text-base">
           <p>
-            Led by founder and lead editor <strong>Bhuvan Bhaskar</strong>, <strong>Videolozy.in</strong> is a full-time video post-production organization dedicated to high-impact visual storytelling. With over {{ site.yearsActive }} years in the edit suite, our team brings relentless precision to every frame.
+            Led by founder and lead editor <strong class="text-white">Bhuvan Bhaskar</strong>, <strong class="text-neon-yellow">Videolozy.in</strong> is a premier full-service post-production studio dedicated to high-impact visual storytelling.
           </p>
           <p>
-            We specialize in rhythm-driven editing, color grading, and motion design — finding the precise moment where sound, motion, and emotion converge. Our arsenal includes Adobe Premiere Pro, DaVinci Resolve Studio, and After Effects.
-          </p>
-          <p>
-            Whether you are a commercial brand, agency director, or filmmaker, Videolozy.in delivers complete post-production solutions with uncompromising quality.
+            We specialize in rhythm-driven editing, precision color grading, dynamic motion graphics, and immersive sound design. Every project is crafted to connect emotionally with audiences across screens worldwide.
           </p>
         </div>
 
         <!-- Skills Tags -->
-        <div class="mt-8 flex flex-wrap gap-2">
-          {% assign skills = "Adobe Premiere Pro,DaVinci Resolve,After Effects,Color Grading,Sound Design,Motion Graphics,Commercial Editing,Documentary" | split: "," %}
+        <div class="mt-8 flex flex-wrap gap-2.5">
+          {% assign skills = "Adobe Premiere Pro,DaVinci Resolve Studio,After Effects,Color Grading,Sound Design,Motion Graphics,Commercial Editing,Documentary" | split: "," %}
           {% for skill in skills %}
-          <span class="px-3 py-1.5 rounded-full text-xs font-medium bg-card border border-border
-                       text-text-secondary hover:border-neon-red/40 hover:text-white transition-colors">
+          <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold yellow-pill-badge transition-colors hover:bg-neon-yellow hover:text-black">
             {{ skill }}
           </span>
           {% endfor %}
         </div>
 
         <div class="mt-10">
-          <a href="mailto:{{ site.email }}" class="btn-neon text-sm" id="about-cta">
-            Start a Conversation
+          <a href="mailto:{{ site.email }}" class="btn-yellow text-sm" id="about-cta">
+            Start a Project with Us
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
             </svg>
           </a>
         </div>
       </div>
 
-      <!-- Visual Side — Decorative with Parallax White Glass Cards -->
+      <!-- Visual Side — Parallax Glass Cards -->
       <div class="relative">
-        <!-- Floating Ambient White Backing Glow -->
-        <div class="absolute -top-10 -right-10 w-72 h-72 rounded-full opacity-20 bg-white blur-3xl animate-parallax-float pointer-events-none"></div>
-
-        <!-- Stacked cards visual -->
         <div class="relative w-full max-w-sm mx-auto lg:ml-auto">
           <!-- Background card -->
-          <div class="absolute inset-0 transform translate-x-4 translate-y-4 rounded-2xl
-                      bg-white/[0.02] border border-white/10 backdrop-blur-md animate-parallax-reverse"></div>
+          <div class="absolute inset-0 transform translate-x-5 translate-y-5 rounded-2xl
+                      bg-neon-yellow/[0.08] border border-neon-yellow/30 backdrop-blur-md animate-parallax-reverse"></div>
           <!-- Middle card -->
-          <div class="absolute inset-0 transform translate-x-2 translate-y-2 rounded-2xl
-                      bg-white/[0.04] border border-white/15 backdrop-blur-md"></div>
+          <div class="absolute inset-0 transform translate-x-2.5 translate-y-2.5 rounded-2xl
+                      bg-neon-red/[0.08] border border-neon-red/30 backdrop-blur-md"></div>
           <!-- Front card -->
           <div class="relative rounded-2xl white-glass-card p-8 shadow-2xl animate-parallax-float">
             <!-- Decorative film strip -->
             <div class="flex justify-center mb-6">
-              <div class="flex gap-1.5 p-1.5 rounded-lg bg-black/40 border border-white/10">
+              <div class="flex gap-1.5 p-1.5 rounded-lg bg-black/60 border border-white/20">
+                <div class="w-3 h-5 rounded-sm bg-neon-yellow"></div>
+                <div class="w-3 h-5 rounded-sm bg-white/40"></div>
                 <div class="w-3 h-5 rounded-sm bg-neon-red"></div>
-                <div class="w-3 h-5 rounded-sm bg-white/20"></div>
-                <div class="w-3 h-5 rounded-sm bg-white/60"></div>
-                <div class="w-3 h-5 rounded-sm bg-white/20"></div>
+                <div class="w-3 h-5 rounded-sm bg-white/40"></div>
+                <div class="w-3 h-5 rounded-sm bg-neon-yellow"></div>
+                <div class="w-3 h-5 rounded-sm bg-white/40"></div>
                 <div class="w-3 h-5 rounded-sm bg-neon-red"></div>
-                <div class="w-3 h-5 rounded-sm bg-white/20"></div>
-                <div class="w-3 h-5 rounded-sm bg-white/60"></div>
-                <div class="w-3 h-5 rounded-sm bg-white/20"></div>
               </div>
             </div>
             <!-- Stats grid -->
             <div class="grid grid-cols-2 gap-4 text-center">
-              <div class="p-4 rounded-xl bg-black/50 border border-white/10 hover:border-white/30 transition-colors">
-                <p class="text-2xl font-bold text-neon-red">120+</p>
-                <p class="text-2xs text-text-muted mt-0.5 uppercase tracking-wider font-semibold">Projects</p>
+              <div class="p-4 rounded-xl bg-black/60 border border-white/15 hover:border-neon-yellow/40 transition-colors">
+                <p class="text-2xl font-black text-neon-yellow">120+</p>
+                <p class="text-2xs text-gray-300 mt-0.5 uppercase tracking-wider font-bold">Projects</p>
               </div>
-              <div class="p-4 rounded-xl bg-black/50 border border-white/10 hover:border-white/30 transition-colors">
-                <p class="text-2xl font-bold text-white">{{ site.yearsActive }}+</p>
-                <p class="text-2xs text-text-muted mt-0.5 uppercase tracking-wider font-semibold">Years</p>
+              <div class="p-4 rounded-xl bg-black/60 border border-white/15 hover:border-neon-red/40 transition-colors">
+                <p class="text-2xl font-black text-neon-red">{{ site.yearsActive }}+</p>
+                <p class="text-2xs text-gray-300 mt-0.5 uppercase tracking-wider font-bold">Years</p>
               </div>
-              <div class="p-4 rounded-xl bg-black/50 border border-white/10 hover:border-white/30 transition-colors">
-                <p class="text-2xl font-bold text-white">8×</p>
-                <p class="text-2xs text-text-muted mt-0.5 uppercase tracking-wider font-semibold">Awards</p>
+              <div class="p-4 rounded-xl bg-black/60 border border-white/15 hover:border-neon-red/40 transition-colors">
+                <p class="text-2xl font-black text-white">8×</p>
+                <p class="text-2xs text-gray-300 mt-0.5 uppercase tracking-wider font-bold">Awards</p>
               </div>
-              <div class="p-4 rounded-xl bg-black/50 border border-white/10 hover:border-white/30 transition-colors">
-                <p class="text-2xl font-bold text-white">50+</p>
-                <p class="text-2xs text-text-muted mt-0.5 uppercase tracking-wider font-semibold">Clients</p>
-              </div>
-            </div>
-            <!-- Software badges -->
-            <div class="mt-6 pt-5 border-t border-white/10">
-              <p class="text-2xs text-text-muted uppercase tracking-wider font-semibold mb-3 text-center">
-                Toolkit
-              </p>
-              <div class="flex flex-wrap justify-center gap-2">
-                <span class="px-3 py-1 rounded-md white-pill-badge text-2xs font-semibold">
-                  Premiere Pro
-                </span>
-                <span class="px-3 py-1 rounded-md white-pill-badge text-2xs font-semibold">
-                  DaVinci Resolve
-                </span>
-                <span class="px-3 py-1 rounded-md white-pill-badge text-2xs font-semibold">
-                  After Effects
-                </span>
+              <div class="p-4 rounded-xl bg-black/60 border border-white/15 hover:border-neon-yellow/40 transition-colors">
+                <p class="text-2xl font-black text-neon-yellow">50+</p>
+                <p class="text-2xs text-gray-300 mt-0.5 uppercase tracking-wider font-bold">Clients</p>
               </div>
             </div>
           </div>
@@ -310,39 +299,43 @@ permalink: /
      CONTACT CTA SECTION
      ============================================================ -->
 <section
-  class="py-20 lg:py-28 border-t border-border relative overflow-hidden"
+  class="py-20 lg:py-28 border-t border-white/10 relative overflow-hidden bg-void"
   aria-labelledby="contact-heading"
 >
   <!-- Background glow -->
   <div
     class="absolute inset-0 pointer-events-none"
     aria-hidden="true"
-    style="background: radial-gradient(ellipse 40% 60% at 50% 100%, rgba(255,0,64,0.06) 0%, transparent 70%);"
+    style="background: radial-gradient(ellipse 50% 60% at 50% 100%, rgba(255,230,0,0.12) 0%, rgba(255,0,64,0.08) 50%, transparent 80%);"
   ></div>
 
-  <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <p class="text-neon-red text-xs font-semibold tracking-widest uppercase mb-4">Let's Collaborate</p>
+  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <span class="yellow-pill-badge px-4 py-1.5 text-2xs font-bold uppercase tracking-widest mb-5 inline-block">
+      ⚡ LET'S COLLABORATE
+    </span>
     <h2
       id="contact-heading"
-      class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6"
+      class="text-3xl sm:text-5xl font-black text-white leading-tight mb-6"
     >
-      Ready to Create
-      <br />Something <span class="neon-text">Extraordinary?</span>
+      Ready to Bring Your Vision
+      <br />to Life with <span class="bg-gradient-to-r from-neon-yellow via-white to-neon-red bg-clip-text text-transparent">Videolozy.in?</span>
     </h2>
-    <p class="text-text-secondary text-lg leading-relaxed mb-10">
-      Whether you have a brief ready or just an idea, I'd love to hear about your project.
-      Let's talk about how the right edit can elevate your vision.
+    <p class="text-gray-300 text-lg leading-relaxed mb-10 max-w-2xl mx-auto">
+      Whether you are an agency, commercial director, or brand studio, we'd love to partner on your next video release.
     </p>
-    <a
-      href="mailto:{{ site.email }}"
-      class="btn-neon text-base px-10 py-4 inline-flex"
-      id="contact-cta-email"
-    >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-      </svg>
-      {{ site.email }}
-    </a>
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <a
+        href="mailto:{{ site.email }}"
+        class="btn-yellow text-base px-10 py-4 inline-flex shadow-yellow"
+        id="contact-cta-email"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        {{ site.email }}
+      </a>
+    </div>
   </div>
 </section>
+

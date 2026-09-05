@@ -252,29 +252,29 @@ function renderProjectCard(project) {
     />
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
     <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
-      <div class="w-14 h-14 rounded-full bg-neon-red/90 flex items-center justify-center shadow-neon transform scale-90 group-hover:scale-100 transition-transform duration-300">
-        <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <div class="w-14 h-14 rounded-full bg-neon-yellow flex items-center justify-center shadow-yellow transform scale-90 group-hover:scale-100 transition-transform duration-300">
+        <svg class="w-7 h-7 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </div>
     </div>
-    ${project.is_featured ? `<div class="absolute top-3 left-3"><span class="badge bg-neon-red text-white text-2xs">★ Featured</span></div>` : ""}
-    <div class="absolute top-3 right-3"><span class="badge bg-black/60 text-gray-300 border border-white/10 text-2xs">${escHtml(catLabel)}</span></div>
+    ${project.is_featured ? `<div class="absolute top-3 left-3"><span class="badge bg-neon-red text-white text-2xs font-bold px-2.5 py-1 shadow-neon-sm">★ Featured</span></div>` : ""}
+    <div class="absolute top-3 right-3"><span class="badge bg-black/80 text-neon-yellow border border-neon-yellow/30 text-2xs font-bold px-2.5 py-1 backdrop-blur-md">${escHtml(catLabel)}</span></div>
   </a>
-  <div class="p-4 sm:p-5">
-    <h3 class="font-semibold text-text-primary text-base leading-snug mb-1 group-hover:text-neon-red transition-colors duration-200">
+  <div class="p-4 sm:p-5 bg-surface/90">
+    <h3 class="font-bold text-white text-base leading-snug mb-1.5 group-hover:text-neon-yellow transition-colors duration-200">
       <a href="/projects/detail/?id=${project.id}">${escHtml(project.title)}</a>
     </h3>
-    <div class="flex items-center gap-3 text-xs text-text-muted mb-3">
-      ${project.client_name ? `<span>${escHtml(project.client_name)}</span>` : ""}
+    <div class="flex items-center gap-3 text-xs text-gray-300 mb-3 font-medium">
+      ${project.client_name ? `<span class="text-neon-yellow">${escHtml(project.client_name)}</span> •` : ""}
       <span>${project.year}</span>
     </div>
-    <p class="text-sm text-text-muted leading-relaxed line-clamp-2">${escHtml(project.description)}</p>
-    <div class="mt-4 pt-4 border-t border-border flex items-center justify-between">
-      <span class="flex items-center gap-1.5 text-xs text-text-muted">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+    <p class="text-sm text-gray-300 leading-relaxed line-clamp-2">${escHtml(project.description)}</p>
+    <div class="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+      <span class="flex items-center gap-1.5 text-xs text-gray-300">
+        <svg class="w-3.5 h-3.5 text-neon-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
         ${fmtNum(project.view_count)} views
       </span>
-      <a href="/projects/detail/?id=${project.id}" class="text-xs font-semibold text-neon-red hover:text-neon-red-600 flex items-center gap-1 transition-colors">
-        Watch <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <a href="/projects/detail/?id=${project.id}" class="text-xs font-bold text-neon-yellow hover:text-white flex items-center gap-1 transition-colors">
+        Watch Reel <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
   </div>
@@ -532,7 +532,7 @@ function initFilterBar() {
 
       // Update active state
       filterBtns.forEach((b) => {
-        b.classList.remove("filter-btn--active", "bg-neon-red", "border-neon-red", "text-white");
+        b.classList.remove("filter-btn--active", "bg-neon-yellow", "border-neon-yellow", "text-black", "bg-neon-red", "border-neon-red", "text-white");
         b.setAttribute("aria-pressed", "false");
         b.style.boxShadow = "";
       });
