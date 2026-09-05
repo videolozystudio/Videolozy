@@ -381,6 +381,38 @@
 }
 
 /* =============================================================================
+   3D PARALLAX CARD HOVER MOVEMENT & GLOSS GLARE
+   ============================================================================= */
+.card-project {
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  background: rgba(18, 18, 20, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.card-project:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(255, 0, 64, 0.25), 0 10px 30px -5px rgba(255, 255, 255, 0.1);
+}
+
+.parallax-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 0, 64, 0.1) 40%, transparent 80%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 15;
+}
+
+/* =============================================================================
    PRINT STYLES
    ============================================================================= */
 @media print {
