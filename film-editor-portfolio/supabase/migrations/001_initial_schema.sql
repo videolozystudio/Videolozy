@@ -264,38 +264,38 @@ INSERT INTO public.projects
   (title, description, category, video_provider, video_id, thumbnail_url, client_name, year, is_featured, sort_order)
 VALUES
   (
+    'Videolozy Showcase Reel — Cinematic Edit',
+    'Official showcase video for Videolozy.in by lead editor Bhuvan Bhaskar. High-impact commercial and narrative edits featuring kinetic rhythm cuts, color grading, motion graphics, and sound design.',
+    'commercial', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/maxresdefault.jpg',
+    'Videolozy Showcase', 2024, TRUE, 1
+  ),
+  (
     'Velocity — Nike Commercial',
     'A high-energy 60-second commercial for Nike''s new Velocity running shoe line. Fast cuts, motion blur, and kinetic typography drive the narrative of speed and endurance.',
-    'commercial', 'youtube', 'dQw4w9WgXcQ',
-    'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-    'Nike', 2024, TRUE, 1
+    'commercial', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg',
+    'Nike', 2024, TRUE, 2
   ),
   (
-    'The Last Frame',
-    'A 12-minute short film exploring the relationship between a dying photographer and her estranged daughter. Winner of Best Editing at the 2024 Sundance Shorts Showcase.',
-    'short-film', 'vimeo', '824804225',
-    'https://vumbnail.com/824804225.jpg',
-    'Independent', 2024, TRUE, 2
-  ),
-  (
-    'Echoes — Music Video',
-    'Official music video for "Echoes" by Luna Wave. A dreamlike journey through memory and loss, cut to the rhythm of the track''s shifting time signatures.',
-    'music-video', 'youtube', 'ScMzIvxBSi4',
-    'https://img.youtube.com/vi/ScMzIvxBSi4/maxresdefault.jpg',
+    'Echoes — Narrative Music Video',
+    'Official music video cut for "Echoes". A dreamlike journey through memory and loss, cut to the rhythm of shifting time signatures.',
+    'music-video', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/sddefault.jpg',
     'Luna Wave / Atlantic Records', 2023, TRUE, 3
   ),
   (
-    'Ocean Architects',
+    'Ocean Architects — Feature Documentary',
     'Feature-length documentary following marine biologists building artificial reef structures off the coast of Indonesia. Narrated by David Attenborough.',
-    'documentary', 'vimeo', '76979871',
-    'https://vumbnail.com/76979871.jpg',
+    'documentary', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/maxresdefault.jpg',
     'BBC Natural History Unit', 2023, FALSE, 4
   ),
   (
-    'Golden Hour — Luxury Watch Brand',
+    'Golden Hour — Luxury Brand Ad',
     'A 30-second hero ad for the Aurum Chrono flagship timepiece. The edit mirrors the precision of the watch — every frame lands exactly on the beat.',
-    'commercial', 'youtube', 'aqz-KE-bpKQ',
-    'https://img.youtube.com/vi/aqz-KE-bpKQ/maxresdefault.jpg',
+    'commercial', 'youtube', 'RLETBH5_NpY',
+    'https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg',
     'Aurum Timepieces', 2024, FALSE, 5
   )
 ON CONFLICT DO NOTHING;

@@ -290,6 +290,65 @@ function escHtml(str) {
     .replace(/'/g, "&#39;");
 }
 
+const DEFAULT_PROJECTS = [
+  {
+    id: "demo-showcase-1",
+    title: "Videolozy Showcase Reel — Cinematic Edit",
+    description: "Official showcase video for Videolozy.in by lead editor Bhuvan Bhaskar. High-impact commercial and narrative edits featuring kinetic rhythm cuts, color grading, motion graphics, and sound design.",
+    category: "commercial",
+    video_provider: "youtube",
+    video_id: "RLETBH5_NpY",
+    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/maxresdefault.jpg",
+    client_name: "Videolozy Showcase",
+    year: 2024,
+    view_count: 12450,
+    is_featured: true,
+    sort_order: 1
+  },
+  {
+    id: "demo-showcase-2",
+    title: "Velocity — Nike Commercial",
+    description: "A high-energy 60-second commercial for Nike's new Velocity running shoe line. Fast cuts, motion blur, and kinetic typography drive the narrative of speed.",
+    category: "commercial",
+    video_provider: "youtube",
+    video_id: "RLETBH5_NpY",
+    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg",
+    client_name: "Nike",
+    year: 2024,
+    view_count: 8920,
+    is_featured: true,
+    sort_order: 2
+  },
+  {
+    id: "demo-showcase-3",
+    title: "Echoes — Narrative Music Video",
+    description: "Official music video cut for 'Echoes'. A dreamlike journey through memory and loss, cut to the rhythm of shifting time signatures.",
+    category: "music-video",
+    video_provider: "youtube",
+    video_id: "RLETBH5_NpY",
+    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/sddefault.jpg",
+    client_name: "Luna Wave Records",
+    year: 2023,
+    view_count: 5410,
+    is_featured: true,
+    sort_order: 3
+  },
+  {
+    id: "demo-showcase-4",
+    title: "Ocean Architects — Feature Documentary",
+    description: "Feature-length documentary following marine biologists building artificial reef structures off the coast of Indonesia.",
+    category: "documentary",
+    video_provider: "youtube",
+    video_id: "RLETBH5_NpY",
+    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/maxresdefault.jpg",
+    client_name: "BBC Natural History Unit",
+    year: 2023,
+    view_count: 4200,
+    is_featured: false,
+    sort_order: 4
+  }
+];
+
 async function loadAndRenderProjects() {
   const grid       = document.getElementById("projects-grid");
   const noResults  = document.getElementById("no-results");
@@ -310,26 +369,32 @@ async function loadAndRenderProjects() {
     </div>`).join("");
 
   try {
-    if (!supabase) throw new Error("Supabase not configured.");
+    let projects = [];
 
-    const { data: projects, error } = await supabase
-      .from("projects")
-      .select("id, title, description, category, video_provider, video_id, thumbnail_url, client_name, year, view_count, is_featured, sort_order")
-      .order("sort_order", { ascending: true });
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("id, title, description, category, video_provider, video_id, thumbnail_url, client_name, year, view_count, is_featured, sort_order")
+        .order("sort_order", { ascending: true });
 
-    if (error) throw error;
+      if (!error && data?.length) {
+        projects = data;
+      }
+    }
+
+    if (!projects.length) {
+      projects = DEFAULT_PROJECTS;
+    }
 
     // Store globally for filtering
-    window.__PROJECTS__ = projects || [];
+    window.__PROJECTS__ = projects;
 
     renderFilteredProjects("all");
 
   } catch (err) {
-    console.error("[client.js] Failed to load projects:", err.message);
-    grid.innerHTML = `
-      <div class="col-span-full py-16 text-center">
-        <p class="text-text-muted text-sm">Failed to load projects. Please refresh the page.</p>
-      </div>`;
+    console.error("[client.js] Failed to load projects from Supabase, using showcase default:", err.message);
+    window.__PROJECTS__ = DEFAULT_PROJECTS;
+    renderFilteredProjects("all");
   }
 }
 
@@ -451,26 +516,32 @@ async function initProjectPage() {
   }
 
   try {
-    if (!supabase) throw new Error("Supabase not configured.");
-
     let project;
 
     if (projectId) {
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*")
-        .eq("id", projectId)
-        .single();
-      if (error || !data) throw new Error("Not found");
-      project = data;
+      if (supabase) {
+        const { data } = await supabase
+          .from("projects")
+          .select("*")
+          .eq("id", projectId)
+          .single();
+        if (data) project = data;
+      }
+      if (!project) {
+        project = DEFAULT_PROJECTS.find((p) => p.id === projectId);
+      }
     } else {
-      // Search by slug match (title-based)
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*");
-      if (error) throw error;
-      project = data?.find((p) => slugify(p.title) === slug);
-      if (!project) throw new Error("Not found");
+      let allProjects = [];
+      if (supabase) {
+        const { data } = await supabase.from("projects").select("*");
+        if (data?.length) allProjects = data;
+      }
+      if (!allProjects.length) allProjects = DEFAULT_PROJECTS;
+      project = allProjects.find((p) => slugify(p.title) === slug);
+    }
+
+    if (!project) {
+      project = DEFAULT_PROJECTS[0];
     }
 
     // Update page meta
