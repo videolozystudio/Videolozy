@@ -12,45 +12,34 @@ export default {
       // Color Palette — Neon Dark Theme
       // -----------------------------------------------------------------------
       colors: {
-        // Primary neon accent
-        "neon-red": {
-          DEFAULT: "#FF0040",
-          50:  "#fff0f3",
-          100: "#ffe0e8",
-          200: "#ffc0d1",
-          300: "#ff80a3",
-          400: "#ff4070",
-          600: "#e6003a",
-          700: "#cc0033",
-          800: "#990026",
-          900: "#660019",
-          950: "#33000d",
+        // Refined studio crimson accent
+        "crimson": {
+          DEFAULT: "#E50914",
+          50:  "#fef2f2",
+          100: "#fee2e2",
+          200: "#fecaca",
+          300: "#fca5a5",
+          400: "#f87171",
+          500: "#ef4444",
+          600: "#E50914",
+          700: "#b91c1c",
+          800: "#991b1b",
+          900: "#7f1d1d",
         },
-        // Secondary neon yellow accent
-        "neon-yellow": {
-          DEFAULT: "#FFE600",
-          50:  "#ffffea",
-          100: "#ffffc5",
-          200: "#ffff85",
-          300: "#ffff45",
-          400: "#FFE600",
-          500: "#e6cf00",
-          600: "#b3a100",
-          700: "#807300",
-          800: "#4d4500",
-          900: "#1a1700",
+        "neon-red": {
+          DEFAULT: "#E50914",
         },
         // Background layers
-        "void":    "#0B0B0E",
-        "surface": "#121217",
-        "card":    "#191921",
-        "card-hover": "#242430",
-        "border":  "#2C2C3A",
-        "border-hover": "#4C4C64",
+        "void":    "#0A0A0E",
+        "surface": "#121218",
+        "card":    "#181822",
+        "card-hover": "#20202E",
+        "border":  "#272736",
+        "border-hover": "#3F3F54",
         // Text hierarchy
         "text-primary":   "#FFFFFF",
-        "text-secondary": "#C4C4D4",
-        "text-muted":     "#787890",
+        "text-secondary": "#A1A1AA",
+        "text-muted":     "#71717A",
         // Semantic
         "success": "#00C853",
         "warning": "#FFB300",

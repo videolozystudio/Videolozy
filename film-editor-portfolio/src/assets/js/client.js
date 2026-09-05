@@ -252,28 +252,28 @@ function renderProjectCard(project) {
     />
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
     <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
-      <div class="w-14 h-14 rounded-full bg-neon-yellow flex items-center justify-center shadow-yellow transform scale-90 group-hover:scale-100 transition-transform duration-300">
-        <svg class="w-7 h-7 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <div class="w-14 h-14 rounded-full bg-crimson flex items-center justify-center shadow-lg shadow-crimson/40 transform scale-90 group-hover:scale-100 transition-transform duration-300">
+        <svg class="w-7 h-7 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </div>
     </div>
-    ${project.is_featured ? `<div class="absolute top-3 left-3"><span class="badge bg-neon-red text-white text-2xs font-bold px-2.5 py-1 shadow-neon-sm">★ Featured</span></div>` : ""}
-    <div class="absolute top-3 right-3"><span class="badge bg-black/80 text-neon-yellow border border-neon-yellow/30 text-2xs font-bold px-2.5 py-1 backdrop-blur-md">${escHtml(catLabel)}</span></div>
+    ${project.is_featured ? `<div class="absolute top-3 left-3"><span class="badge bg-crimson text-white text-2xs font-semibold px-2.5 py-1 shadow-sm">★ Featured</span></div>` : ""}
+    <div class="absolute top-3 right-3"><span class="badge bg-black/75 text-gray-200 border border-white/20 text-2xs font-medium px-2.5 py-1 backdrop-blur-md">${escHtml(catLabel)}</span></div>
   </a>
   <div class="p-4 sm:p-5 bg-surface/90">
-    <h3 class="font-bold text-white text-base leading-snug mb-1.5 group-hover:text-neon-yellow transition-colors duration-200">
+    <h3 class="font-bold text-white text-base leading-snug mb-1.5 group-hover:text-crimson transition-colors duration-200">
       <a href="/projects/detail/?id=${project.id}">${escHtml(project.title)}</a>
     </h3>
-    <div class="flex items-center gap-3 text-xs text-gray-300 mb-3 font-medium">
-      ${project.client_name ? `<span class="text-neon-yellow">${escHtml(project.client_name)}</span> •` : ""}
+    <div class="flex items-center gap-3 text-xs text-gray-400 mb-3 font-medium">
+      ${project.client_name ? `<span class="text-white">${escHtml(project.client_name)}</span> •` : ""}
       <span>${project.year}</span>
     </div>
-    <p class="text-sm text-gray-300 leading-relaxed line-clamp-2">${escHtml(project.description)}</p>
+    <p class="text-sm text-gray-400 leading-relaxed line-clamp-2">${escHtml(project.description)}</p>
     <div class="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-      <span class="flex items-center gap-1.5 text-xs text-gray-300">
-        <svg class="w-3.5 h-3.5 text-neon-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      <span class="flex items-center gap-1.5 text-xs text-gray-400">
+        <svg class="w-3.5 h-3.5 text-crimson" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
         ${fmtNum(project.view_count)} views
       </span>
-      <a href="/projects/detail/?id=${project.id}" class="text-xs font-bold text-neon-yellow hover:text-white flex items-center gap-1 transition-colors">
+      <a href="/projects/detail/?id=${project.id}" class="text-xs font-semibold text-crimson hover:text-white flex items-center gap-1 transition-colors">
         Watch Reel <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
@@ -332,48 +332,6 @@ const DEFAULT_PROJECTS = [
     view_count: 22640,
     is_featured: true,
     sort_order: 3
-  },
-  {
-    id: "demo-showcase-4",
-    title: "Visual Architecture — Feature Documentary",
-    description: "Feature-length documentary edit exploring modern urban architecture and acoustic design across international capitals.",
-    category: "documentary",
-    video_provider: "youtube",
-    video_id: "VJ9VC9OqdAA",
-    thumbnail_url: "https://img.youtube.com/vi/VJ9VC9OqdAA/hqdefault.jpg",
-    client_name: "BBC Natural History",
-    year: 2023,
-    view_count: 9850,
-    is_featured: false,
-    sort_order: 4
-  },
-  {
-    id: "demo-showcase-5",
-    title: "The Precision Frame — Fashion Campaign",
-    description: "High-end luxury fashion campaign cut to pulse-driven synth score. Every frame lands precisely on rhythm for maximum brand impact.",
-    category: "commercial",
-    video_provider: "youtube",
-    video_id: "AGFlQ4ViDCA",
-    thumbnail_url: "https://img.youtube.com/vi/AGFlQ4ViDCA/hqdefault.jpg",
-    client_name: "Vogue Studios",
-    year: 2024,
-    view_count: 8320,
-    is_featured: false,
-    sort_order: 5
-  },
-  {
-    id: "demo-showcase-6",
-    title: "Videolozy Master Cut — Studio Reel",
-    description: "Full studio showreel showcasing seamless commercial pacing, sound design, and color grading across agency client projects.",
-    category: "commercial",
-    video_provider: "youtube",
-    video_id: "RLETBH5_NpY",
-    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg",
-    client_name: "Videolozy Showcase",
-    year: 2024,
-    view_count: 12910,
-    is_featured: false,
-    sort_order: 6
   }
 ];
 
