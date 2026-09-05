@@ -65,7 +65,7 @@ function embedUrl(videoId, provider) {
 function thumbnailUrl(videoId, provider, custom = "") {
   if (custom) return custom;
   if (provider === "youtube") {
-    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
   }
   return "/assets/images/placeholder-thumb.svg";
 }
@@ -293,62 +293,48 @@ function escHtml(str) {
 const DEFAULT_PROJECTS = [
   {
     id: "demo-showcase-1",
-    title: "Videolozy Showcase Reel — Master Cut",
-    description: "Official showcase video for Videolozy.in by lead editor Bhuvan Bhaskar. High-impact commercial and narrative edits featuring kinetic rhythm cuts, color grading, and sound design.",
+    title: "India's Got Latent — Show Edit",
+    description: "Official comedy show edit featuring fast multi-camera cuts, live audio balancing, and kinetic graphics.",
     category: "commercial",
     video_provider: "youtube",
-    video_id: "RLETBH5_NpY",
-    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/maxresdefault.jpg",
-    client_name: "Videolozy Showcase",
+    video_id: "VJ9VC9OqdAA",
+    thumbnail_url: "https://img.youtube.com/vi/VJ9VC9OqdAA/hqdefault.jpg",
+    client_name: "Samay Raina",
     year: 2024,
-    view_count: 15420,
+    view_count: 18420,
     is_featured: true,
     sort_order: 1
   },
   {
     id: "demo-showcase-2",
-    title: "Rhythm & Motion — Short Film Reel",
-    description: "Dynamic narrative sequence showcasing emotional pacing, subtle transitions, and precise shot selection. Highlighted edit from recent narrative productions.",
+    title: "Ye Dil Tum Bin Kahi — Romantic Narrative",
+    description: "A dreamlike romantic sequence cut to classic melody. Pacing and color grading tuned for deep emotional connection.",
     category: "short-film",
     video_provider: "youtube",
-    video_id: "VJ9VC9OqdAA",
-    thumbnail_url: "https://img.youtube.com/vi/VJ9VC9OqdAA/maxresdefault.jpg",
-    client_name: "Bhuvan Bhaskar Cut",
+    video_id: "AGFlQ4ViDCA",
+    thumbnail_url: "https://img.youtube.com/vi/AGFlQ4ViDCA/hqdefault.jpg",
+    client_name: "Saregama Music",
     year: 2024,
-    view_count: 11890,
+    view_count: 14890,
     is_featured: true,
     sort_order: 2
   },
   {
     id: "demo-showcase-3",
-    title: "Velocity & Brand Experience — Commercial",
-    description: "A fast-paced 60-second commercial cut for brand experience. Fast cuts, kinetic typography, and deep color grading drive high-energy visual engagement.",
-    category: "commercial",
+    title: "Meri Sanson Mein Basa Hai — Music Video",
+    description: "Official music video cut featuring Rahat Fateh Ali Khan & Kavya Limaye. Rhythm-driven cuts matched to vocal crescendo.",
+    category: "music-video",
     video_provider: "youtube",
-    video_id: "AGFlQ4ViDCA",
-    thumbnail_url: "https://img.youtube.com/vi/AGFlQ4ViDCA/maxresdefault.jpg",
-    client_name: "Apex Global",
+    video_id: "RLETBH5_NpY",
+    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg",
+    client_name: "Boundless Melodies",
     year: 2024,
-    view_count: 9640,
+    view_count: 22640,
     is_featured: true,
     sort_order: 3
   },
   {
     id: "demo-showcase-4",
-    title: "Echoes of Memory — Music Video",
-    description: "Official music video edit for 'Echoes of Memory'. A dreamlike visual journey cut synchronously to shifting ambient soundscapes and beats.",
-    category: "music-video",
-    video_provider: "youtube",
-    video_id: "RLETBH5_NpY",
-    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg",
-    client_name: "Luna Wave Records",
-    year: 2023,
-    view_count: 7850,
-    is_featured: false,
-    sort_order: 4
-  },
-  {
-    id: "demo-showcase-5",
     title: "Visual Architecture — Feature Documentary",
     description: "Feature-length documentary edit exploring modern urban architecture and acoustic design across international capitals.",
     category: "documentary",
@@ -357,12 +343,12 @@ const DEFAULT_PROJECTS = [
     thumbnail_url: "https://img.youtube.com/vi/VJ9VC9OqdAA/hqdefault.jpg",
     client_name: "BBC Natural History",
     year: 2023,
-    view_count: 6320,
+    view_count: 9850,
     is_featured: false,
-    sort_order: 5
+    sort_order: 4
   },
   {
-    id: "demo-showcase-6",
+    id: "demo-showcase-5",
     title: "The Precision Frame — Fashion Campaign",
     description: "High-end luxury fashion campaign cut to pulse-driven synth score. Every frame lands precisely on rhythm for maximum brand impact.",
     category: "commercial",
@@ -371,18 +357,36 @@ const DEFAULT_PROJECTS = [
     thumbnail_url: "https://img.youtube.com/vi/AGFlQ4ViDCA/hqdefault.jpg",
     client_name: "Vogue Studios",
     year: 2024,
-    view_count: 5910,
+    view_count: 8320,
+    is_featured: false,
+    sort_order: 5
+  },
+  {
+    id: "demo-showcase-6",
+    title: "Videolozy Master Cut — Studio Reel",
+    description: "Full studio showreel showcasing seamless commercial pacing, sound design, and color grading across agency client projects.",
+    category: "commercial",
+    video_provider: "youtube",
+    video_id: "RLETBH5_NpY",
+    thumbnail_url: "https://img.youtube.com/vi/RLETBH5_NpY/hqdefault.jpg",
+    client_name: "Videolozy Showcase",
+    year: 2024,
+    view_count: 12910,
     is_featured: false,
     sort_order: 6
   }
 ];
 
 // =============================================================================
-// 3D PARALLAX HOVER CARD MOVEMENT
+// 3D PARALLAX HOVER CARD MOVEMENT (Desktop Only for Mobile Touch Safety)
 // =============================================================================
 function initParallaxCards() {
   const cards = document.querySelectorAll(".card-project");
   if (!cards.length) return;
+
+  // Disable 3D tilt on mobile/touch devices for smooth touch scrolling
+  const isTouchDevice = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
+  if (isTouchDevice) return;
 
   cards.forEach((card) => {
     // Inject specular glare element if not already present
