@@ -1,0 +1,37 @@
+{
+  "name": "film-editor-portfolio",
+  "version": "1.0.0",
+  "description": "Professional film editor portfolio with dual-interface system",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "npm-run-all --parallel watch:css watch:eleventy",
+    "watch:eleventy": "node --max-old-space-size=4096 node_modules/@11ty/eleventy/cmd.cjs --serve --incremental",
+    "watch:css": "tailwindcss -i ./src/assets/css/styles.css -o ./_site/assets/css/styles.css --watch",
+    "build": "npm run build:css && npm run build:eleventy",
+    "build:css": "tailwindcss -i ./src/assets/css/styles.css -o ./_site/assets/css/styles.css --minify",
+    "build:eleventy": "node --max-old-space-size=4096 node_modules/@11ty/eleventy/cmd.cjs",
+    "clean": "rimraf _site"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.1",
+    "@11ty/eleventy": "^3.0.0"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.5",
+    "tailwindcss": "^3.4.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "film-editor",
+    "portfolio",
+    "eleventy",
+    "supabase",
+    "tailwindcss"
+  ],
+  "author": "Film Editor Portfolio",
+  "license": "MIT"
+}

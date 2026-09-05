@@ -1,0 +1,171 @@
+---
+layout: client
+title: Project — Film Editor Portfolio
+description: View this portfolio project with embedded video player and full details.
+permalink: /projects/detail/
+eleventyExcludeFromCollections: true
+---
+
+<!--
+  PROJECT DETAIL PAGE — Static Shell
+  Project data is fetched entirely client-side from Supabase by client.js.
+  The project ID is passed via URL query string: /projects/detail/?id=UUID
+-->
+
+<!-- Extract project ID from URL for JS -->
+<div
+  id="project-page"
+  class="min-h-screen"
+>
+
+  <!-- ============================================================
+       Loading State
+       ============================================================ -->
+  <div id="project-loading" class="py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Breadcrumb skeleton -->
+      <div class="flex items-center gap-2 mb-8">
+        <div class="skeleton h-4 w-12 rounded"></div>
+        <div class="skeleton h-4 w-4 rounded"></div>
+        <div class="skeleton h-4 w-32 rounded"></div>
+      </div>
+      <!-- Player skeleton -->
+      <div class="w-full rounded-xl mb-8 skeleton" style="padding-bottom:56.25%; position:relative;">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <svg class="w-12 h-12 text-text-muted/20 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+          </svg>
+        </div>
+      </div>
+      <!-- Meta skeleton -->
+      <div class="space-y-3 max-w-2xl">
+        <div class="skeleton h-8 w-3/4 rounded"></div>
+        <div class="skeleton h-5 w-1/2 rounded"></div>
+        <div class="skeleton h-4 w-full rounded mt-4"></div>
+        <div class="skeleton h-4 w-5/6 rounded"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Project Content (revealed by JS after data loads)
+       ============================================================ -->
+  <div id="project-content" class="hidden">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
+      <ol class="flex items-center gap-2 text-sm text-text-muted">
+        <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
+        <li aria-hidden="true">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </li>
+        <li><a href="/#work" class="hover:text-white transition-colors">Work</a></li>
+        <li aria-hidden="true">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </li>
+        <li class="text-text-primary font-medium truncate max-w-xs" id="breadcrumb-title">Project</li>
+      </ol>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+
+      <!-- VIDEO PLAYER CONTAINER (injected by JS) -->
+      <div class="mb-10" id="project-player-container"></div>
+
+      <!-- PROJECT METADATA -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-16">
+
+        <!-- Main Info -->
+        <div class="lg:col-span-2">
+          <div class="flex items-center gap-2 mb-4">
+            <span id="project-category-badge" class="badge bg-neon-red/15 border border-neon-red/30 text-neon-red"></span>
+            <span id="project-featured-badge" class="badge bg-yellow-500/15 border border-yellow-500/30 text-yellow-400 hidden">★ Featured</span>
+          </div>
+
+          <h1 id="project-title" class="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-4"></h1>
+
+          <div id="project-description" class="text-text-secondary leading-relaxed space-y-3 mb-8"></div>
+
+          <div class="flex items-center gap-2 text-sm text-text-muted">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            <span id="project-view-count" class="font-semibold text-white">—</span> views
+          </div>
+        </div>
+
+        <!-- Sidebar Meta -->
+        <div class="lg:col-span-1">
+          <div class="glass rounded-xl border border-border p-6 space-y-5">
+            <div>
+              <p class="text-2xs text-text-muted uppercase tracking-wider font-semibold mb-1">Client</p>
+              <p id="project-client" class="text-sm text-text-primary font-medium">—</p>
+            </div>
+            <div>
+              <p class="text-2xs text-text-muted uppercase tracking-wider font-semibold mb-1">Year</p>
+              <p id="project-year" class="text-sm text-text-primary font-medium">—</p>
+            </div>
+            <div>
+              <p class="text-2xs text-text-muted uppercase tracking-wider font-semibold mb-1">Category</p>
+              <p id="project-category-text" class="text-sm text-text-primary font-medium">—</p>
+            </div>
+            <div>
+              <p class="text-2xs text-text-muted uppercase tracking-wider font-semibold mb-1">Platform</p>
+              <p id="project-platform" class="text-sm text-text-primary font-medium">—</p>
+            </div>
+            <div class="pt-4 border-t border-border">
+              <a href="/#work" class="btn-ghost text-sm w-full justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back to Portfolio
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREV / NEXT NAVIGATION -->
+      <div id="project-navigation" class="hidden mt-16 pt-8 border-t border-border grid grid-cols-2 gap-4">
+        <a id="nav-prev" href="#" class="group flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-border-hover transition-all duration-200">
+          <svg class="w-5 h-5 text-text-muted group-hover:text-neon-red transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <div class="min-w-0">
+            <p class="text-2xs text-text-muted uppercase tracking-wider mb-0.5">Previous</p>
+            <p id="nav-prev-title" class="text-sm font-medium text-text-primary truncate"></p>
+          </div>
+        </a>
+        <a id="nav-next" href="#" class="group flex items-center justify-end gap-3 p-4 rounded-xl bg-card border border-border hover:border-border-hover transition-all duration-200 text-right">
+          <div class="min-w-0">
+            <p class="text-2xs text-text-muted uppercase tracking-wider mb-0.5">Next</p>
+            <p id="nav-next-title" class="text-sm font-medium text-text-primary truncate"></p>
+          </div>
+          <svg class="w-5 h-5 text-text-muted group-hover:text-neon-red transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div id="project-error" class="hidden py-32 text-center">
+    <div class="max-w-sm mx-auto px-4">
+      <p class="text-6xl font-black text-neon-red mb-4">404</p>
+      <h1 class="text-2xl font-bold text-white mb-3">Project Not Found</h1>
+      <p class="text-text-muted mb-8">This project may have been removed or the URL has changed.</p>
+      <a href="/#work" class="btn-neon">Back to Portfolio</a>
+    </div>
+  </div>
+
+</div>

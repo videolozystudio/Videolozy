@@ -1,0 +1,155 @@
+---
+layout: base
+title: Admin Login
+description: Film Editor Portfolio — Admin Login
+noindex: true
+permalink: /admin/login/
+---
+
+<div class="min-h-screen bg-void flex items-center justify-center p-4">
+
+  <!-- Background glow -->
+  <div
+    class="fixed inset-0 pointer-events-none"
+    aria-hidden="true"
+    style="background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255,0,64,0.05) 0%, transparent 70%);"
+  ></div>
+
+  <!-- Login Card -->
+  <div class="relative w-full max-w-md">
+
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-neon-red flex items-center justify-center
+                  shadow-neon">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-white">Admin Portal</h1>
+      <p class="text-sm text-text-muted mt-1">Film Editor Portfolio CMS</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="glass rounded-2xl border border-border p-8 shadow-2xl">
+
+      <!-- Error Alert (hidden by default) -->
+      <div
+        id="login-error"
+        class="hidden mb-6 p-4 rounded-lg bg-danger/10 border border-danger/30
+               flex items-start gap-3"
+        role="alert"
+      >
+        <svg class="w-5 h-5 text-danger flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p id="login-error-message" class="text-sm text-danger"></p>
+      </div>
+
+      <form id="login-form" novalidate class="space-y-5">
+
+        <!-- Email -->
+        <div>
+          <label for="login-email" class="block text-sm font-medium text-text-secondary mb-1.5">
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="login-email"
+            name="email"
+            class="input-field"
+            placeholder="admin@example.com"
+            required
+            autocomplete="email"
+            autofocus
+          />
+        </div>
+
+        <!-- Password -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="login-password" class="block text-sm font-medium text-text-secondary">
+              Password
+            </label>
+          </div>
+          <div class="relative">
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              class="input-field pr-12"
+              placeholder="••••••••"
+              required
+              autocomplete="current-password"
+            />
+            <!-- Toggle visibility -->
+            <button
+              type="button"
+              id="toggle-password"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted
+                     hover:text-text-secondary transition-colors"
+              aria-label="Toggle password visibility"
+            >
+              <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          id="btn-login"
+          class="btn-neon w-full justify-center py-3 mt-2 text-base"
+        >
+          <span id="btn-login-label">Sign In</span>
+          <svg
+            id="btn-login-spinner"
+            class="hidden w-5 h-5 animate-spin"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+          </svg>
+        </button>
+
+      </form>
+
+      <!-- Footer Note -->
+      <p class="mt-6 text-center text-xs text-text-muted">
+        Access is restricted to authorized administrators only.
+      </p>
+    </div>
+
+    <!-- Back to Site -->
+    <div class="text-center mt-6">
+      <a href="/" class="text-sm text-text-muted hover:text-white transition-colors inline-flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back to Portfolio
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+<!-- Login script -->
+<script>
+  window.__SITE_CONFIG__ = {
+    supabaseUrl:     "{{ site.supabase.url }}",
+    supabaseAnonKey: "{{ site.supabase.anonKey }}",
+  };
+</script>
+<script type="module" src="/assets/js/admin.js"></script>

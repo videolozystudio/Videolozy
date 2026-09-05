@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="dark scroll-smooth"
+  data-supabase-url="{{ site.supabase.url }}"
+  data-supabase-anon-key="{{ site.supabase.anonKey }}"
+>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- ============================================================
+       SEO & Meta Tags
+       ============================================================ -->
+  <title>{% if title %}{{ title }} — {{ site.name }}{% else %}{{ site.name }} | Film Editor{% endif %}</title>
+  <meta name="description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
+  <meta name="author" content="{{ site.name }}" />
+  <meta name="robots" content="{% if noindex %}noindex, nofollow{% else %}index, follow{% endif %}" />
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}" />
+
+  <!-- ============================================================
+       Open Graph (Facebook / LinkedIn)
+       ============================================================ -->
+  <meta property="og:type"        content="{% if og_type %}{{ og_type }}{% else %}website{% endif %}" />
+  <meta property="og:url"         content="{{ site.url }}{{ page.url }}" />
+  <meta property="og:title"       content="{% if title %}{{ title }} — {{ site.name }}{% else %}{{ site.name }} | Film Editor{% endif %}" />
+  <meta property="og:description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
+  <meta property="og:image"       content="{% if og_image %}{{ og_image }}{% else %}{{ site.url }}/assets/images/og-default.jpg{% endif %}" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name"   content="{{ site.name }}" />
+
+  <!-- ============================================================
+       Twitter Cards
+       ============================================================ -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:site"        content="@filmreelstudio" />
+  <meta name="twitter:title"       content="{% if title %}{{ title }} — {{ site.name }}{% else %}{{ site.name }} | Film Editor{% endif %}" />
+  <meta name="twitter:description" content="{% if description %}{{ description }}{% else %}{{ site.description }}{% endif %}" />
+  <meta name="twitter:image"       content="{% if og_image %}{{ og_image }}{% else %}{{ site.url }}/assets/images/og-default.jpg{% endif %}" />
+
+  <!-- ============================================================
+       Favicon
+       ============================================================ -->
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png" />
+
+  <!-- ============================================================
+       Google Fonts — Inter + JetBrains Mono
+       ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ============================================================
+       Tailwind CSS (compiled output)
+       ============================================================ -->
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+
+  <!-- ============================================================
+       Extra head content from child layouts
+       ============================================================ -->
+  {{ head_extra }}
+
+  <!-- ============================================================
+       PostHog Analytics
+       ============================================================ -->
+  {% if site.posthog.key != "" %}
+  <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]);t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+" (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('{{ site.posthog.key }}', {
+      api_host: '{{ site.posthog.host }}',
+      capture_pageview: true,
+      capture_pageleave: true,
+      autocapture: false,
+    });
+  </script>
+  {% endif %}
+</head>
+
+<body class="bg-void text-text-primary font-sans antialiased">
+
+  <!-- Skip to main content (accessibility) -->
+  <a
+    href="#main-content"
+    class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-neon-red focus:text-white focus:rounded-md focus:outline-none"
+  >
+    Skip to main content
+  </a>
+
+  <!-- ============================================================
+       Page Content (injected by child layouts)
+       ============================================================ -->
+  {{ content }}
+
+  <!-- ============================================================
+       Toast Notification Container
+       ============================================================ -->
+  <div
+    id="toast-container"
+    class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"
+    aria-live="polite"
+    aria-atomic="false"
+  ></div>
+
+  <!-- ============================================================
+       Inline Config for JavaScript
+       ============================================================ -->
+  <script>
+    window.__SITE_CONFIG__ = {
+      supabaseUrl:     "{{ site.supabase.url }}",
+      supabaseAnonKey: "{{ site.supabase.anonKey }}",
+      siteUrl:         "{{ site.url }}",
+    };
+  </script>
+
+  <!-- ============================================================
+       Extra scripts from child layouts
+       ============================================================ -->
+  {{ scripts_extra }}
+
+</body>
+</html>

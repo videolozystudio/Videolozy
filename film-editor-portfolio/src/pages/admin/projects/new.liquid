@@ -1,0 +1,36 @@
+---
+layout: admin
+title: New Project
+admin_page_title: New Project
+noindex: true
+permalink: /admin/projects/new/
+---
+
+<!-- Breadcrumb -->
+<nav aria-label="Breadcrumb" class="mb-6">
+  <ol class="flex items-center gap-2 text-sm text-text-muted">
+    <li><a href="/admin/" class="hover:text-white transition-colors">Dashboard</a></li>
+    <li aria-hidden="true">›</li>
+    <li><a href="/admin/projects/" class="hover:text-white transition-colors">Projects</a></li>
+    <li aria-hidden="true">›</li>
+    <li class="text-text-primary">New Project</li>
+  </ol>
+</nav>
+
+<div class="max-w-3xl">
+
+  <!-- Page Header -->
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold text-white">Create New Project</h2>
+    <p class="text-sm text-text-muted mt-1">
+      Add a new video project to your portfolio. All required fields are marked with
+      <span class="text-neon-red">*</span>
+    </p>
+  </div>
+
+  <!-- Form Card -->
+  <div class="glass rounded-2xl border border-border p-6 sm:p-8">
+    {% include "components/admin/project-form.liquid" %}
+  </div>
+
+</div>

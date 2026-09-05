@@ -1,0 +1,67 @@
+<!-- ============================================================
+     Video Grid Component
+     Renders the filter bar + card grid.
+     Usage: {% render "components/video-grid", projects: projects %}
+     ============================================================ -->
+
+<!-- Filter Bar -->
+<div class="mb-8 sm:mb-12" id="filter-bar">
+  <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filter projects by category">
+    {% for cat in site.categories %}
+    <button
+      type="button"
+      class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200
+             {% if forloop.first %}
+               filter-btn--active bg-neon-red border-neon-red text-white
+             {% else %}
+               bg-transparent border-border text-text-secondary
+               hover:border-border-hover hover:text-white
+             {% endif %}"
+      data-category="{{ cat.value }}"
+      aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+      id="filter-{{ cat.value }}"
+    >
+      {{ cat.label }}
+    </button>
+    {% endfor %}
+
+    <!-- Result count -->
+    <span
+      id="filter-count"
+      class="ml-auto text-xs text-text-muted font-medium"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      {{ projects.size }} projects
+    </span>
+  </div>
+</div>
+
+<!-- Projects Grid -->
+<div
+  id="projects-grid"
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+  aria-label="Project portfolio grid"
+>
+  {% for project in projects %}
+    {% include "components/video-card.liquid" %}
+  {% endfor %}
+</div>
+
+<!-- Empty State (hidden by default, shown by JS when no matches) -->
+<div
+  id="no-results"
+  class="hidden py-24 text-center"
+  role="status"
+  aria-live="polite"
+>
+  <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-card border border-border
+              flex items-center justify-center">
+    <svg class="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M15 10l4.553-2.069A1 1 0 0121 8.878v6.243a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+    </svg>
+  </div>
+  <h3 class="text-base font-semibold text-text-secondary mb-1">No projects found</h3>
+  <p class="text-sm text-text-muted">Try selecting a different category.</p>
+</div>

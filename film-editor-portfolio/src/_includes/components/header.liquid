@@ -1,0 +1,117 @@
+<!-- ============================================================
+     Header Component — Client Interface
+     ============================================================ -->
+<header
+  id="site-header"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+  data-scrolled="false"
+>
+  <!-- Backdrop (visible when scrolled) -->
+  <div
+    id="header-backdrop"
+    class="absolute inset-0 bg-void/90 backdrop-blur-md border-b border-border
+           opacity-0 transition-opacity duration-300"
+    aria-hidden="true"
+  ></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 sm:h-20">
+
+      <!-- Logo -->
+      <a
+        href="/"
+        class="flex items-center gap-3 group"
+        aria-label="{{ site.name }} — Home"
+        id="site-logo"
+      >
+        <!-- Icon mark -->
+        <div
+          class="w-9 h-9 rounded-lg bg-neon-red flex items-center justify-center
+                 group-hover:shadow-neon-sm transition-shadow duration-300"
+        >
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+          </svg>
+        </div>
+
+        <!-- Wordmark -->
+        <div class="leading-none">
+          <span class="block text-base font-bold text-white tracking-tight">
+            {{ site.name }}
+          </span>
+          <span class="block text-2xs text-text-muted font-medium tracking-widest uppercase">
+            Film Editor
+          </span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
+        {% for item in site.nav %}
+        <a
+          href="{{ item.href }}"
+          class="px-4 py-2 rounded-lg text-sm font-medium text-text-secondary
+                 hover:text-white hover:bg-white/6 transition-colors duration-200"
+        >
+          {{ item.label }}
+        </a>
+        {% endfor %}
+
+        <!-- CTA -->
+        <a
+          href="mailto:{{ site.email }}"
+          class="ml-3 btn-neon text-sm"
+          id="header-cta"
+        >
+          Hire Me
+        </a>
+      </nav>
+
+      <!-- Mobile Menu Toggle -->
+      <button
+        id="mobile-nav-toggle"
+        class="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5
+               rounded-lg hover:bg-white/6 transition-colors"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <span class="mobile-bar w-5 h-0.5 bg-white transition-all duration-300 origin-center"></span>
+        <span class="mobile-bar w-5 h-0.5 bg-white transition-all duration-300"></span>
+        <span class="mobile-bar w-5 h-0.5 bg-white transition-all duration-300 origin-center"></span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Drawer -->
+  <div
+    id="mobile-nav"
+    class="md:hidden absolute top-full left-0 right-0 bg-surface border-b border-border
+           transform -translate-y-2 opacity-0 pointer-events-none
+           transition-all duration-300 ease-in-out"
+    aria-hidden="true"
+  >
+    <nav class="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-1" aria-label="Mobile navigation">
+      {% for item in site.nav %}
+      <a
+        href="{{ item.href }}"
+        class="px-4 py-3 rounded-lg text-sm font-medium text-text-secondary
+               hover:text-white hover:bg-white/6 transition-colors"
+      >
+        {{ item.label }}
+      </a>
+      {% endfor %}
+      <a
+        href="mailto:{{ site.email }}"
+        class="mt-2 btn-neon text-sm w-full justify-center"
+      >
+        Hire Me
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- Spacer to prevent content overlap with fixed header -->
+<div class="h-16 sm:h-20"></div>
