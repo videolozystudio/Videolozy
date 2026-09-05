@@ -287,6 +287,100 @@
 }
 
 /* =============================================================================
+   PARALLAX & SUBTLE WHITE ACCENT STYLES
+   ============================================================================= */
+@keyframes parallax-float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(-22px) rotate(3deg) scale(1.04);
+  }
+}
+
+@keyframes parallax-float-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(28px) rotate(-4deg) scale(1.03);
+  }
+}
+
+@keyframes white-glow-pulse {
+  0%, 100% {
+    opacity: 0.08;
+    filter: blur(80px);
+  }
+  50% {
+    opacity: 0.22;
+    filter: blur(100px);
+  }
+}
+
+@keyframes parallax-drift {
+  0% {
+    transform: translateX(-5%) translateY(0);
+  }
+  50% {
+    transform: translateX(5%) translateY(-15px);
+  }
+  100% {
+    transform: translateX(-5%) translateY(0);
+  }
+}
+
+.animate-parallax-float {
+  animation: parallax-float-slow 8s ease-in-out infinite;
+}
+
+.animate-parallax-reverse {
+  animation: parallax-float-reverse 10s ease-in-out infinite;
+}
+
+.animate-white-pulse {
+  animation: white-glow-pulse 6s ease-in-out infinite;
+}
+
+.animate-parallax-drift {
+  animation: parallax-drift 14s ease-in-out infinite;
+}
+
+/* White Parallax Glow Orbs */
+.white-glow-orb {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 80%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* White Glassmorphism Card Effect */
+.white-glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 40px -10px rgba(255, 255, 255, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.white-glass-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 50px -10px rgba(255, 255, 255, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+  transform: translateY(-4px);
+}
+
+/* Crisp White Pill Accent */
+.white-pill-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  backdrop-filter: blur(8px);
+}
+
+/* =============================================================================
    PRINT STYLES
    ============================================================================= */
 @media print {
