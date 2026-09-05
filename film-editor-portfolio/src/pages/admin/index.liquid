@@ -28,7 +28,6 @@ permalink: /admin/
     <div class="glass rounded-xl border border-border overflow-hidden">
       <div id="recent-projects-list" class="divide-y divide-border">
         <!-- Skeleton rows loaded by JS -->
-        {% for i in (1..5) %}
         <div class="flex items-center gap-4 p-4 animate-pulse">
           <div class="skeleton h-12 w-20 rounded-lg flex-shrink-0"></div>
           <div class="flex-1 space-y-2">
@@ -38,7 +37,24 @@ permalink: /admin/
           <div class="skeleton h-6 w-16 rounded-full hidden sm:block"></div>
           <div class="skeleton h-8 w-14 rounded"></div>
         </div>
-        {% endfor %}
+        <div class="flex items-center gap-4 p-4 animate-pulse">
+          <div class="skeleton h-12 w-20 rounded-lg flex-shrink-0"></div>
+          <div class="flex-1 space-y-2">
+            <div class="skeleton h-4 w-48 rounded"></div>
+            <div class="skeleton h-3 w-28 rounded"></div>
+          </div>
+          <div class="skeleton h-6 w-16 rounded-full hidden sm:block"></div>
+          <div class="skeleton h-8 w-14 rounded"></div>
+        </div>
+        <div class="flex items-center gap-4 p-4 animate-pulse">
+          <div class="skeleton h-12 w-20 rounded-lg flex-shrink-0"></div>
+          <div class="flex-1 space-y-2">
+            <div class="skeleton h-4 w-48 rounded"></div>
+            <div class="skeleton h-3 w-28 rounded"></div>
+          </div>
+          <div class="skeleton h-6 w-16 rounded-full hidden sm:block"></div>
+          <div class="skeleton h-8 w-14 rounded"></div>
+        </div>
       </div>
 
       <!-- Empty state (shown by JS if no projects) -->

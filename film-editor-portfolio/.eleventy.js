@@ -142,7 +142,7 @@ export default function (eleventyConfig) {
   // ---------------------------------------------------------------------------
   // Template Formats
   // ---------------------------------------------------------------------------
-  eleventyConfig.addTemplateFormats("liquid,html,njk,md");
+  eleventyConfig.addTemplateFormats(["liquid", "html", "njk", "md"]);
 
   // ---------------------------------------------------------------------------
   // Directory Configuration
