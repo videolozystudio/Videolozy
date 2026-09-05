@@ -441,6 +441,16 @@ async function loadAndRenderProjects() {
       projects = DEFAULT_PROJECTS;
     }
 
+    // Deduplicate projects by video_id or id to ensure duplicate database entries never show repeated cards
+    const uniqueMap = new Map();
+    for (const p of projects) {
+      const key = (p.video_id && p.video_id.trim()) ? p.video_id.trim() : p.id;
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, p);
+      }
+    }
+    projects = Array.from(uniqueMap.values());
+
     // Store globally for filtering
     window.__PROJECTS__ = projects;
 
@@ -494,7 +504,7 @@ function initFilterBar() {
 
       // Update active state
       filterBtns.forEach((b) => {
-        b.classList.remove("filter-btn--active", "bg-neon-yellow", "border-neon-yellow", "text-black", "bg-neon-red", "border-neon-red", "text-white");
+        b.classList.remove("filter-btn--active", "bg-crimson", "border-crimson", "text-white");
         b.setAttribute("aria-pressed", "false");
         b.style.boxShadow = "";
       });
