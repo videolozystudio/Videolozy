@@ -5,11 +5,12 @@
 
 export default {
   // Basic metadata
-  name:        process.env.EDITOR_NAME    || "Alex Rivera",
-  tagline:     process.env.EDITOR_TAGLINE || "Crafting Stories Through the Art of the Edit",
-  description: "Award-winning film editor specializing in commercials, short films, music videos, and documentaries. Based in Los Angeles.",
-  url:         process.env.SITE_URL       || "https://your-portfolio.vercel.app",
-  email:       process.env.CONTACT_EMAIL  || "hello@filmreel.studio",
+  name:        process.env.EDITOR_NAME    || "Bhuvan Bhaskar",
+  brand:       "Videolozy.in",
+  tagline:     process.env.EDITOR_TAGLINE || "High-End Video Post-Production & Editing Organization",
+  description: "Videolozy.in is a premier video post-production agency led by Bhuvan Bhaskar, specializing in commercials, brand films, music videos, narrative shorts, and documentary editing.",
+  url:         process.env.SITE_URL       || "https://videolozy.in",
+  email:       process.env.CONTACT_EMAIL  || "contact@videolozy.in",
 
   // Years of experience (auto-calculated)
   yearsActive: new Date().getFullYear() - 2012,
