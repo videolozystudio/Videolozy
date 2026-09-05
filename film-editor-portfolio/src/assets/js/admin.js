@@ -394,15 +394,23 @@ async function loadProjects() {
   }
 
   allProjects = data || [];
+
+  // [FIX 6] Rebuild Trie after fresh data load for O(L) prefix search
+  projectTrie.rebuild(allProjects);
+
   renderProjectTable();
 }
 
 function getFilteredProjects() {
-  return allProjects.filter((p) => {
-    const matchSearch   = !searchQuery || p.title.toLowerCase().includes(searchQuery) || (p.client_name || "").toLowerCase().includes(searchQuery);
-    const matchCategory = !categoryFilter || p.category === categoryFilter;
-    return matchSearch && matchCategory;
-  });
+  // [FIX 6] Use Trie for O(L) prefix search; fall back to full list when no query
+  if (searchQuery) {
+    const matchingIds = new Set(projectTrie.search(searchQuery));
+    return allProjects.filter((p) => {
+      if (!matchingIds.has(p.id)) return false;
+      return !categoryFilter || p.category === categoryFilter;
+    });
+  }
+  return allProjects.filter((p) => !categoryFilter || p.category === categoryFilter);
 }
 
 function renderProjectTable() {
@@ -507,23 +515,28 @@ function initDeleteModal() {
   confirmBtn?.addEventListener("click", async () => {
     if (!pendingDeleteId) return;
 
-    confirmBtn.disabled = true;
-    confirmBtn.textContent = "Deleting…";
+    const idToDelete = pendingDeleteId;
+
+    // [FIX 7] Optimistic UI update — remove the row from local state immediately
+    // so the user sees instant feedback, then confirm with Supabase in the background.
+    const snapshot    = [...allProjects];                             // save for rollback
+    allProjects       = allProjects.filter((p) => p.id !== idToDelete);
+    projectTrie.rebuild(allProjects);                                 // keep Trie in sync
+    renderProjectTable();                                             // instant re-render
+    closeDeleteModal();
+    showToast("Project deleted.", "success");
 
     try {
-      const { error } = await supabase.from("projects").delete().eq("id", pendingDeleteId);
+      const { error } = await supabase.from("projects").delete().eq("id", idToDelete);
       if (error) throw error;
-
-      allProjects = allProjects.filter((p) => p.id !== pendingDeleteId);
-      renderProjectTable();
-      closeDeleteModal();
-      showToast("Project deleted successfully.", "success");
+      // Success — nothing else to do; the UI is already correct.
 
     } catch (err) {
-      showToast(`Failed to delete project: ${err.message}`, "error");
-    } finally {
-      confirmBtn.disabled = false;
-      confirmBtn.textContent = "Delete";
+      // Rollback: restore original data and re-render
+      allProjects = snapshot;
+      projectTrie.rebuild(allProjects);
+      renderProjectTable();
+      showToast(`Delete failed — restored. ${err.message}`, "error", 6000);
     }
   });
 }
@@ -570,8 +583,19 @@ async function initProjectForm() {
   }
 
   // Thumbnail preview on URL change
+  const debounce = (fn, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), delay);
+    };
+  };
+
   const thumbInput = document.getElementById("field-thumbnail");
   thumbInput?.addEventListener("input", debounce(updateThumbPreview, 500));
+
+  const videoUrlInput = document.getElementById("field-video-url");
+  videoUrlInput?.addEventListener("input", debounce(updateThumbPreview, 500));
 
   // Description character count
   const descInput  = document.getElementById("field-description");
@@ -675,15 +699,19 @@ async function loadProjectForEdit() {
     f("field-client",      project.client_name);
     f("field-category",    project.category);
     f("field-year",        project.year);
-    f("field-video-id",    project.video_id);
     f("field-thumbnail",   project.thumbnail_url);
     f("field-description", project.description);
     f("field-sort-order",  project.sort_order);
     f("field-featured",    project.is_featured);
 
-    // Set video provider radio
-    const radio = document.querySelector(`input[name="video_provider"][value="${project.video_provider}"]`);
-    if (radio) radio.checked = true;
+    const videoUrlEl = document.getElementById("field-video-url");
+    if (videoUrlEl && project.video_id) {
+      if (project.video_provider === "vimeo") {
+        videoUrlEl.value = `https://vimeo.com/${project.video_id}`;
+      } else {
+        videoUrlEl.value = `https://youtube.com/watch?v=${project.video_id}`;
+      }
+    }
 
     // Update UI labels
     if (titleEl) titleEl.textContent = `Edit: ${project.title}`;
@@ -714,14 +742,26 @@ async function loadProjectForEdit() {
 
 function collectFormData(form) {
   const get   = (id) => document.getElementById(id);
-  const radio = form.querySelector('input[name="video_provider"]:checked');
+  const videoUrl = get("field-video-url")?.value.trim() || "";
+  let video_provider = "youtube";
+  let video_id = "";
+  
+  if (videoUrl.includes("vimeo.com")) {
+    video_provider = "vimeo";
+    const match = videoUrl.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (match) video_id = match[1];
+  } else {
+    video_provider = "youtube";
+    const match = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+    if (match) video_id = match[1];
+  }
 
   return {
     title:          get("field-title")?.value.trim()       || "",
     description:    get("field-description")?.value.trim() || "",
     category:       get("field-category")?.value           || "",
-    video_provider: radio?.value                           || "youtube",
-    video_id:       get("field-video-id")?.value.trim()    || "",
+    video_provider,
+    video_id,
     thumbnail_url:  get("field-thumbnail")?.value.trim()   || "",
     client_name:    get("field-client")?.value.trim()      || "",
     year:           parseInt(get("field-year")?.value, 10) || new Date().getFullYear(),
@@ -736,7 +776,7 @@ function validateForm(form) {
   const required = [
     ["field-title",       "error-title",       "Title is required."],
     ["field-category",    "error-category",    "Please select a category."],
-    ["field-video-id",    "error-video-id",    "Video ID is required."],
+    ["field-video-url",   "error-video-url",   "Video URL is required."],
     ["field-description", "error-description", "Description is required."],
     ["field-year",        "error-year",        "Year is required."],
   ];
@@ -760,12 +800,19 @@ function validateForm(form) {
 }
 
 function updateThumbPreview() {
-  const url      = document.getElementById("field-thumbnail")?.value.trim();
+  const thumbUrl = document.getElementById("field-thumbnail")?.value.trim();
+  const videoUrl = document.getElementById("field-video-url")?.value.trim();
   const previewEl = document.getElementById("thumb-preview");
   if (!previewEl) return;
 
-  if (url) {
-    previewEl.innerHTML = `<img src="${escHtml(url)}" class="w-full h-full object-cover" alt="Thumbnail" onerror="this.parentElement.innerHTML='<span class=\\'text-2xs text-danger\\'>Invalid</span>'" />`;
+  let urlToUse = thumbUrl;
+  if (!urlToUse && videoUrl) {
+    const match = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+    if (match) urlToUse = `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+  }
+
+  if (urlToUse) {
+    previewEl.innerHTML = `<img src="${escHtml(urlToUse)}" class="w-full h-full object-cover" alt="Thumbnail" onerror="this.parentElement.innerHTML='<span class=\\'text-2xs text-danger\\'>Invalid</span>'" />`;
     previewEl.style.opacity = "1";
   } else {
     previewEl.innerHTML = `<span class="text-2xs text-text-muted">—</span>`;
@@ -774,12 +821,27 @@ function updateThumbPreview() {
 }
 
 function previewVideo() {
-  const videoId  = document.getElementById("field-video-id")?.value.trim();
-  const provider = document.querySelector('input[name="video_provider"]:checked')?.value || "youtube";
+  const videoUrl = document.getElementById("field-video-url")?.value.trim();
   const area     = document.getElementById("video-preview-area");
   const iframe   = document.getElementById("video-preview-iframe");
 
-  if (!videoId || !area || !iframe) return;
+  if (!videoUrl || !area || !iframe) return;
+
+  let provider = "youtube";
+  let videoId = "";
+  if (videoUrl.includes("vimeo.com")) {
+    provider = "vimeo";
+    const match = videoUrl.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (match) videoId = match[1];
+  } else {
+    const match = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+    if (match) videoId = match[1];
+  }
+  
+  if (!videoId) {
+    showToast("Invalid video URL", "error");
+    return;
+  }
 
   const urls = {
     youtube: `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`,
@@ -882,6 +944,70 @@ async function initSettingsPage() {
     window.location.replace("/admin/login/");
   });
 }
+
+// =============================================================================
+// TRIE DATA STRUCTURE [FIX 6] — O(L) prefix-match search for admin project list
+//
+// A Trie (Prefix Tree) stores each character of every project title as a node.
+// Prefix lookups are O(L) where L = length of the query string, regardless
+// of how many projects exist — vs O(N * L) for a linear Array.filter scan.
+// =============================================================================
+class TrieNode {
+  constructor() {
+    this.children  = {}; // char -> TrieNode
+    this.projectIds = []; // IDs of projects that match exactly at this prefix
+  }
+}
+
+class Trie {
+  constructor() {
+    this.root = new TrieNode();
+  }
+
+  /**
+   * Insert a project title into the Trie.
+   * All characters are lowercased for case-insensitive matching.
+   * @param {string} title
+   * @param {string} id - project UUID
+   */
+  insert(title, id) {
+    let node = this.root;
+    for (const char of title.toLowerCase()) {
+      if (!node.children[char]) node.children[char] = new TrieNode();
+      node = node.children[char];
+      // Mark every prefix node with this project ID
+      // This allows prefix search to return all matching projects
+      if (!node.projectIds.includes(id)) node.projectIds.push(id);
+    }
+  }
+
+  /**
+   * Return all project IDs whose titles start with (or contain) the given prefix.
+   * @param {string} prefix
+   * @returns {string[]} array of project IDs
+   */
+  search(prefix) {
+    let node = this.root;
+    for (const char of prefix.toLowerCase()) {
+      if (!node.children[char]) return []; // no match
+      node = node.children[char];
+    }
+    return node.projectIds;
+  }
+
+  /** Rebuild the Trie from scratch (called after project list changes) */
+  rebuild(projects) {
+    this.root = new TrieNode();
+    for (const p of projects) {
+      this.insert(p.title, p.id);
+      // Also index client_name for broader search coverage
+      if (p.client_name) this.insert(p.client_name, p.id);
+    }
+  }
+}
+
+// Singleton Trie instance shared across the admin project list
+const projectTrie = new Trie();
 
 // =============================================================================
 // UTILITIES

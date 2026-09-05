@@ -228,6 +228,7 @@ function renderProjectCard(project) {
   const thumb    = thumbnailUrl(project.video_id, project.video_provider, project.thumbnail_url);
   const slug     = slugify(project.title);
   const catLabel = categoryLabel(project.category);
+  const src      = embedUrl(project.video_id, project.video_provider);
 
   return `
 <article
@@ -236,29 +237,33 @@ function renderProjectCard(project) {
   data-id="${project.id}"
   data-project-card
 >
-  <a
-    href="/projects/detail/?id=${project.id}"
-    class="block relative overflow-hidden bg-card"
-    style="aspect-ratio:16/9;"
-    aria-label="Watch ${escHtml(project.title)}"
-  >
-    <img
-      src="${escHtml(thumb)}"
-      alt="${escHtml(project.title)} — ${escHtml(catLabel)}"
-      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-      loading="lazy"
-      decoding="async"
-      onerror="this.src='/assets/images/placeholder-thumb.svg'"
-    />
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
-      <div class="w-14 h-14 rounded-full bg-neon-yellow flex items-center justify-center shadow-yellow transform scale-90 group-hover:scale-100 transition-transform duration-300">
-        <svg class="w-7 h-7 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+  <div class="relative w-full aspect-video bg-card overflow-hidden">
+    <div
+      class="absolute inset-0 block cursor-pointer"
+      data-video-poster
+      data-embed-src="${src}"
+      aria-label="Play ${escHtml(project.title)}"
+      tabindex="0"
+    >
+      <img
+        src="${escHtml(thumb)}"
+        alt="${escHtml(project.title)} — ${escHtml(catLabel)}"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+        decoding="async"
+        onerror="this.src='/assets/images/placeholder-thumb.svg'"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+        <button class="w-14 h-14 rounded-full bg-neon-silver/90 flex items-center justify-center shadow-neon transform scale-90 group-hover:scale-100 transition-transform duration-300" data-play-btn>
+          <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
       </div>
+      ${project.is_featured ? `<div class="absolute top-3 left-3"><span class="badge bg-neon-silver text-white text-2xs px-2.5 py-1 shadow-neon-sm">★ Featured</span></div>` : ""}
+      <div class="absolute top-3 right-3"><span class="badge bg-black/60 text-neon-silver border border-white/10 text-2xs font-bold px-2.5 py-1">${escHtml(catLabel)}</span></div>
     </div>
-    ${project.is_featured ? `<div class="absolute top-3 left-3"><span class="badge bg-neon-red text-white text-2xs font-bold px-2.5 py-1 shadow-neon-sm">★ Featured</span></div>` : ""}
-    <div class="absolute top-3 right-3"><span class="badge bg-black/80 text-neon-yellow border border-neon-yellow/30 text-2xs font-bold px-2.5 py-1 backdrop-blur-md">${escHtml(catLabel)}</span></div>
-  </a>
+    <iframe class="absolute inset-0 w-full h-full hidden" title="${escHtml(project.title)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="opacity:0; transition:opacity 0.5s;"></iframe>
+  </div>
   <div class="p-4 sm:p-5 bg-surface/90">
     <h3 class="font-bold text-white text-base leading-snug mb-1.5 group-hover:text-neon-yellow transition-colors duration-200">
       <a href="/projects/detail/?id=${project.id}">${escHtml(project.title)}</a>
@@ -378,8 +383,252 @@ const DEFAULT_PROJECTS = [
 ];
 
 // =============================================================================
-// 3D PARALLAX HOVER CARD MOVEMENT (Desktop Only for Mobile Touch Safety)
+// PROJECT GRID — HashMap-based filtering + Cursor-based infinite scroll
+//
+// [FIX 4] Pre-process projects into a Map<category, Project[]> after first load
+//         so category filtering is O(1) instead of O(N) Array.filter().
+//
+// [FIX 5] Cursor-based pagination with IntersectionObserver infinite scroll.
+//         First 12 projects load immediately, then more are fetched as the user
+//         scrolls toward the sentinel element at the bottom of the grid.
 // =============================================================================
+
+const PAGE_SIZE   = 12;
+let activeCategory = "all";
+let nextCursor     = null;      // sort_order of last loaded project
+let isLoadingMore  = false;     // guard against concurrent fetches
+let scrollObserver = null;      // IntersectionObserver instance
+
+// [FIX 4] Category hash map: Map<string, Project[]>
+// 'all' key holds the full list for total counts
+const projectsMap = new Map();
+
+function addToMap(projects) {
+  // Always update the 'all' bucket
+  const all = projectsMap.get("all") ?? [];
+  projectsMap.set("all", [...all, ...projects]);
+
+  // Per-category buckets
+  for (const p of projects) {
+    const bucket = projectsMap.get(p.category) ?? [];
+    bucket.push(p);
+    projectsMap.set(p.category, bucket);
+  }
+}
+
+/**
+ * Fetch a page of projects from the API.
+ * Uses cursor-based pagination: ?cursor=<sort_order> instead of ?offset=N
+ */
+async function fetchProjectPage(cursor = null, category = "all") {
+  const params = new URLSearchParams({ limit: String(PAGE_SIZE) });
+  if (cursor !== null)          params.set("cursor",   String(cursor));
+  if (category !== "all")       params.set("category", category);
+
+  const res = await fetch(`/api/projects?${params}`);
+  if (!res.ok) throw new Error(`API error ${res.status}`);
+  return res.json(); // { data, count, nextCursor }
+}
+
+/**
+ * Append rendered project cards to the grid.
+ */
+function appendCards(projects) {
+  const grid = document.getElementById("projects-grid");
+  if (!grid) return;
+  const fragment = document.createDocumentFragment();
+  for (const p of projects) {
+    const div = document.createElement("div");
+    div.innerHTML = renderProjectCard(p).trim();
+    fragment.appendChild(div.firstChild);
+  }
+  grid.appendChild(fragment);
+  initParallaxCards(); // re-init tilt on new cards
+}
+
+/**
+ * Update the filter count label.
+ */
+function updateCount(n) {
+  const el = document.getElementById("filter-count");
+  if (el) el.textContent = `${n} project${n !== 1 ? "s" : ""}`;
+}
+
+/**
+ * Create / reset the IntersectionObserver sentinel for infinite scroll.
+ */
+function initInfiniteScroll() {
+  // Disconnect any existing observer
+  if (scrollObserver) scrollObserver.disconnect();
+
+  let sentinel = document.getElementById("scroll-sentinel");
+  if (!sentinel) {
+    sentinel = document.createElement("div");
+    sentinel.id = "scroll-sentinel";
+    sentinel.style.cssText = "height:1px;margin-top:48px;";
+    const grid = document.getElementById("projects-grid");
+    grid?.parentElement?.appendChild(sentinel);
+  }
+
+  scrollObserver = new IntersectionObserver(
+    async (entries) => {
+      if (!entries[0].isIntersecting) return;
+      if (isLoadingMore)              return;
+      if (nextCursor === null)        { scrollObserver.disconnect(); return; }
+
+      isLoadingMore = true;
+      try {
+        // [FIX 5] Fetch next page using cursor (O(1) DB index seek, not O(N) scan)
+        const { data, nextCursor: nc } = await fetchProjectPage(nextCursor, activeCategory);
+        nextCursor = nc;
+
+        if (data?.length) {
+          addToMap(data);
+          appendCards(data);
+          updateCount((projectsMap.get(activeCategory) ?? []).length);
+        }
+
+        if (nextCursor === null) scrollObserver.disconnect();
+      } catch (err) {
+        console.error("[client.js] Infinite scroll error:", err.message);
+      } finally {
+        isLoadingMore = false;
+      }
+    },
+    { rootMargin: "200px" } // start loading 200px before sentinel is visible
+  );
+
+  scrollObserver.observe(sentinel);
+}
+
+async function loadAndRenderProjects() {
+  const grid = document.getElementById("projects-grid");
+  if (!grid) return;
+
+  // Show skeleton while first page loads
+  grid.innerHTML = Array.from({ length: PAGE_SIZE }).map(() => `
+    <div class="rounded-xl overflow-hidden bg-card border border-border animate-pulse">
+      <div class="skeleton aspect-video"></div>
+      <div class="p-5 space-y-3">
+        <div class="skeleton h-4 w-3/4 rounded"></div>
+        <div class="skeleton h-3 w-1/2 rounded"></div>
+        <div class="skeleton h-3 w-full rounded"></div>
+        <div class="skeleton h-3 w-5/6 rounded"></div>
+      </div>
+    </div>`).join("");
+
+  try {
+    let firstPage;
+
+    if (supabase) {
+      firstPage = await fetchProjectPage(null, activeCategory);
+    }
+
+    // Fallback to demo data if API unavailable or returns empty
+    if (!firstPage?.data?.length) {
+      addToMap(DEFAULT_PROJECTS);
+      grid.innerHTML = DEFAULT_PROJECTS.map(renderProjectCard).join("");
+      updateCount(DEFAULT_PROJECTS.length);
+      initParallaxCards();
+      return;
+    }
+
+    nextCursor = firstPage.nextCursor;
+    addToMap(firstPage.data);
+
+    grid.innerHTML = "";
+    appendCards(firstPage.data);
+    updateCount((projectsMap.get(activeCategory) ?? []).length);
+
+    // Set up infinite scroll only if there are more pages
+    if (nextCursor !== null) initInfiniteScroll();
+
+  } catch (err) {
+    console.error("[client.js] Failed to load projects — falling back to demo data:", err.message);
+    addToMap(DEFAULT_PROJECTS);
+    grid.innerHTML = DEFAULT_PROJECTS.map(renderProjectCard).join("");
+    updateCount(DEFAULT_PROJECTS.length);
+    initParallaxCards();
+  }
+}
+
+// =============================================================================
+// FILTER BAR — O(1) HashMap category lookup
+// =============================================================================
+function initFilterBar() {
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  if (!filterBtns.length) return;
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const category = btn.dataset.category;
+      if (category === activeCategory) return; // nothing changed
+
+      activeCategory = category;
+
+      // Update active state
+      filterBtns.forEach((b) => {
+        b.classList.remove("filter-btn--active", "bg-neon-yellow", "border-neon-yellow",
+                            "text-black", "bg-neon-silver", "border-neon-silver", "text-white");
+        b.setAttribute("aria-pressed", "false");
+        b.style.boxShadow = "";
+      });
+      btn.classList.add("filter-btn--active");
+      btn.setAttribute("aria-pressed", "true");
+
+      const grid      = document.getElementById("projects-grid");
+      const noResults = document.getElementById("no-results");
+
+      // [FIX 4] O(1) HashMap lookup — no Array.filter() scan
+      const cached = projectsMap.get(category);
+
+      if (cached?.length) {
+        // We already have this category loaded — render instantly from cache
+        grid.innerHTML = cached.map(renderProjectCard).join("");
+        noResults?.classList.add("hidden");
+        updateCount(cached.length);
+        initParallaxCards();
+        // Reset infinite scroll for this category's cursor (use cached data only)
+        if (scrollObserver) { scrollObserver.disconnect(); scrollObserver = null; }
+        nextCursor = null;
+        return;
+      }
+
+      // Category not yet cached — fetch first page from API
+      grid.innerHTML = `
+        <div class="col-span-full flex items-center justify-center py-16">
+          <div class="w-8 h-8 rounded-full border-2 border-neon-silver border-t-transparent animate-spin"></div>
+        </div>`;
+
+      try {
+        const { data, nextCursor: nc } = await fetchProjectPage(null, category);
+        nextCursor = nc;
+
+        if (!data?.length) {
+          grid.innerHTML = "";
+          noResults?.classList.remove("hidden");
+          updateCount(0);
+          return;
+        }
+
+        noResults?.classList.add("hidden");
+        addToMap(data);
+        grid.innerHTML = "";
+        appendCards(data);
+        updateCount((projectsMap.get(category) ?? []).length);
+        initParallaxCards();
+
+        if (nextCursor !== null) initInfiniteScroll();
+
+      } catch (err) {
+        console.error("[client.js] Filter fetch error:", err.message);
+        grid.innerHTML = "";
+        noResults?.classList.remove("hidden");
+        updateCount(0);
+      }
+    });
+  });
+}
 function initParallaxCards() {
   const cards = document.querySelectorAll(".card-project");
   if (!cards.length) return;
@@ -446,111 +695,7 @@ function initParallaxCards() {
   });
 }
 
-async function loadAndRenderProjects() {
-  const grid       = document.getElementById("projects-grid");
-  const noResults  = document.getElementById("no-results");
-  const countEl    = document.getElementById("filter-count");
 
-  if (!grid) return;
-
-  // Show skeleton while loading
-  grid.innerHTML = Array.from({ length: 6 }).map(() => `
-    <div class="rounded-xl overflow-hidden bg-card border border-border animate-pulse">
-      <div class="skeleton aspect-video"></div>
-      <div class="p-5 space-y-3">
-        <div class="skeleton h-4 w-3/4 rounded"></div>
-        <div class="skeleton h-3 w-1/2 rounded"></div>
-        <div class="skeleton h-3 w-full rounded"></div>
-        <div class="skeleton h-3 w-5/6 rounded"></div>
-      </div>
-    </div>`).join("");
-
-  try {
-    let projects = [];
-
-    if (supabase) {
-      const { data, error } = await supabase
-        .from("projects")
-        .select("id, title, description, category, video_provider, video_id, thumbnail_url, client_name, year, view_count, is_featured, sort_order")
-        .order("sort_order", { ascending: true });
-
-      if (!error && data?.length) {
-        projects = data;
-      }
-    }
-
-    if (!projects.length) {
-      projects = DEFAULT_PROJECTS;
-    }
-
-    // Store globally for filtering
-    window.__PROJECTS__ = projects;
-
-    renderFilteredProjects("all");
-
-  } catch (err) {
-    console.error("[client.js] Failed to load projects from Supabase, using showcase default:", err.message);
-    window.__PROJECTS__ = DEFAULT_PROJECTS;
-    renderFilteredProjects("all");
-  }
-}
-
-function renderFilteredProjects(category = "all") {
-  const grid      = document.getElementById("projects-grid");
-  const noResults = document.getElementById("no-results");
-  const countEl   = document.getElementById("filter-count");
-  const projects  = window.__PROJECTS__ || [];
-
-  if (!grid) return;
-
-  const filtered = category === "all"
-    ? projects
-    : projects.filter((p) => p.category === category);
-
-  if (countEl) countEl.textContent = `${filtered.length} project${filtered.length !== 1 ? "s" : ""}`;
-
-  if (filtered.length === 0) {
-    grid.innerHTML = "";
-    if (noResults) noResults.classList.remove("hidden");
-    return;
-  }
-
-  if (noResults) noResults.classList.add("hidden");
-  grid.innerHTML = filtered.map(renderProjectCard).join("");
-  initParallaxCards();
-}
-
-// =============================================================================
-// FILTER BAR — Category buttons
-// =============================================================================
-function initFilterBar() {
-  const filterBtns = document.querySelectorAll(".filter-btn");
-  if (!filterBtns.length) return;
-
-  // Debounce helper
-  let debounceTimer;
-
-  filterBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const category = btn.dataset.category;
-
-      // Update active state
-      filterBtns.forEach((b) => {
-        b.classList.remove("filter-btn--active", "bg-neon-yellow", "border-neon-yellow", "text-black", "bg-neon-red", "border-neon-red", "text-white");
-        b.setAttribute("aria-pressed", "false");
-        b.style.boxShadow = "";
-      });
-      btn.classList.add("filter-btn--active");
-      btn.setAttribute("aria-pressed", "true");
-
-      // Debounced filter render
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        renderFilteredProjects(category);
-      }, 50);
-    });
-  });
-}
 
 // =============================================================================
 // VIDEO PLAYER — Click-to-play poster
@@ -656,7 +801,7 @@ async function initProjectPage() {
           <div class="absolute inset-0 flex items-center justify-center cursor-pointer group" data-video-poster data-embed-src="${src}">
             <img src="${escHtml(thumb)}" alt="${escHtml(project.title)}" class="absolute inset-0 w-full h-full object-cover" loading="eager" />
             <div class="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300"></div>
-            <button class="relative z-10 w-20 h-20 rounded-full bg-neon-red flex items-center justify-center shadow-neon transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-neon-lg" aria-label="Play ${escHtml(project.title)}" data-play-btn>
+            <button class="relative z-10 w-20 h-20 rounded-full bg-neon-silver flex items-center justify-center shadow-neon transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-neon-lg" aria-label="Play ${escHtml(project.title)}" data-play-btn>
               <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </button>
           </div>

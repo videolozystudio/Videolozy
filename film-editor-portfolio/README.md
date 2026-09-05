@@ -205,7 +205,7 @@ film-editor-portfolio/
 Edit `tailwind.config.js`:
 ```js
 colors: {
-  "neon-red": "#FF0040",   // ← Change this
+  "neon-silver": "#FF0040",   // ← Change this
   "void":     "#080808",   // ← Dark background
   // ...
 }

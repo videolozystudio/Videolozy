@@ -1,25 +1,33 @@
 // =============================================================================
 // api/projects/index.js — GET all projects / POST create project
 // Vercel Serverless Function
+//
+// Optimizations applied:
+//   [1] Redis-backed rate limiter (replaces in-memory Map)
+//   [2] Cursor-based pagination (replaces offset-based .range())
 // =============================================================================
 
 import { createClient } from "@supabase/supabase-js";
+import { checkRateLimit } from "../lib/rateLimiter.js";
 
-// Server-side Supabase client using SERVICE ROLE KEY (bypasses RLS for admin ops)
-// This key NEVER leaves the server — it is only used here in Vercel functions.
+// ---------------------------------------------------------------------------
+// Supabase Client Factory
+// ---------------------------------------------------------------------------
 function getServerClient(useServiceRole = false) {
-  const url     = process.env.SUPABASE_URL;
-  const key     = useServiceRole
+  const url = process.env.SUPABASE_URL;
+  const key = useServiceRole
     ? process.env.SUPABASE_SERVICE_ROLE_KEY
     : process.env.SUPABASE_ANON_KEY;
 
   if (!url || !key) {
     throw new Error("Supabase environment variables are not configured.");
   }
-  return createClient(url, key, {
-    auth: { persistSession: false },
-  });
+  return createClient(url, key, { auth: { persistSession: false } });
 }
+
+// ---------------------------------------------------------------------------
+// Auth helpers
+// ---------------------------------------------------------------------------
 
 /**
  * Verify the incoming request has a valid Supabase JWT.
@@ -31,7 +39,6 @@ async function authenticate(req) {
 
   if (!token) throw new Error("Missing authorization token.");
 
-  // Use anon client to verify token (Supabase handles JWT validation)
   const anonClient = getServerClient(false);
   const { data: { user }, error } = await anonClient.auth.getUser(token);
 
@@ -40,7 +47,7 @@ async function authenticate(req) {
 }
 
 /**
- * Check the authenticated user is in the admin_users table.
+ * Verify the authenticated user is in the admin_users table.
  */
 async function requireAdmin(user) {
   const serviceClient = getServerClient(true);
@@ -51,26 +58,6 @@ async function requireAdmin(user) {
     .single();
 
   if (error || !data) throw new Error("Insufficient permissions. Admin access required.");
-  return true;
-}
-
-// Rate limiting — simple in-memory store (use Upstash Redis in production)
-const requestCounts = new Map();
-const RATE_LIMIT    = 60;  // requests per window
-const RATE_WINDOW   = 60 * 1000; // 1 minute
-
-function checkRateLimit(ip) {
-  const now  = Date.now();
-  const entry = requestCounts.get(ip);
-
-  if (!entry || now - entry.windowStart > RATE_WINDOW) {
-    requestCounts.set(ip, { count: 1, windowStart: now });
-    return true;
-  }
-
-  if (entry.count >= RATE_LIMIT) return false;
-
-  entry.count++;
   return true;
 }
 
@@ -86,25 +73,39 @@ export default async function handler(req, res) {
 
   if (req.method === "OPTIONS") return res.status(204).end();
 
-  // Rate limiting
-  const clientIp = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
-  if (!checkRateLimit(clientIp)) {
-    return res.status(429).json({ error: "Too many requests. Please try again later." });
-  }
+  // [FIX 1] Redis rate limiter — works across all Vercel instances / cold starts
+  const limited = await checkRateLimit(req, res);
+  if (limited) return;
 
   try {
     // ------------------------------------------------------------------
-    // GET /api/projects — Public: fetch all projects
+    // GET /api/projects — Public: fetch projects (cursor-based pagination)
     // ------------------------------------------------------------------
     if (req.method === "GET") {
-      const { category, limit = "100", offset = "0", order = "sort_order" } = req.query;
+      const {
+        category,
+        limit    = "12",
+        // [FIX 2] cursor = sort_order of the last item seen (replaces offset)
+        cursor   = null,
+        order    = "sort_order",
+      } = req.query;
 
+      const pageSize = Math.min(Math.max(parseInt(limit, 10) || 12, 1), 100);
       const supabase = getServerClient(false);
+
       let query = supabase
         .from("projects")
-        .select("id, title, description, category, video_provider, video_id, thumbnail_url, client_name, year, view_count, is_featured, sort_order, created_at")
+        .select(
+          "id, title, description, category, video_provider, video_id, " +
+          "thumbnail_url, client_name, year, view_count, is_featured, sort_order, created_at"
+        )
         .order(order, { ascending: true })
-        .range(parseInt(offset, 10), parseInt(offset, 10) + parseInt(limit, 10) - 1);
+        .limit(pageSize);
+
+      // Cursor: only fetch rows after the last seen sort_order value
+      if (cursor !== null && cursor !== "") {
+        query = query.gt(order, parseInt(cursor, 10));
+      }
 
       if (category && category !== "all") {
         query = query.eq("category", category);
@@ -113,7 +114,16 @@ export default async function handler(req, res) {
       const { data, error } = await query;
       if (error) throw error;
 
-      return res.status(200).json({ data, count: data.length });
+      // Return the next cursor so the client knows where to resume
+      const nextCursor = data.length === pageSize
+        ? (data[data.length - 1]?.[order] ?? null)
+        : null;
+
+      return res.status(200).json({
+        data,
+        count:      data.length,
+        nextCursor, // null means no more pages
+      });
     }
 
     // ------------------------------------------------------------------
@@ -128,7 +138,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Invalid request body." });
       }
 
-      // Validate required fields
       const { title, category, video_provider, video_id, year } = body;
       if (!title || !category || !video_provider || !video_id || !year) {
         return res.status(400).json({
@@ -150,7 +159,7 @@ export default async function handler(req, res) {
         sort_order:     parseInt(body.sort_order, 10) || 0,
       };
 
-      if (!payload.category) return res.status(400).json({ error: "Invalid category value." });
+      if (!payload.category)       return res.status(400).json({ error: "Invalid category value." });
       if (!payload.video_provider) return res.status(400).json({ error: "Invalid video_provider value." });
       if (payload.year < 1990 || payload.year > 2100) return res.status(400).json({ error: "Invalid year." });
 
@@ -170,7 +179,7 @@ export default async function handler(req, res) {
 
   } catch (err) {
     const status = err.message?.includes("Missing authorization") ? 401
-                 : err.message?.includes("Invalid or expired") ? 401
+                 : err.message?.includes("Invalid or expired")    ? 401
                  : err.message?.includes("Insufficient permissions") ? 403
                  : 500;
 

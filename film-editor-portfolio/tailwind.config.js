@@ -13,18 +13,18 @@ export default {
       // -----------------------------------------------------------------------
       colors: {
         // Primary neon accent
-        "neon-red": {
-          DEFAULT: "#FF0040",
-          50:  "#fff0f3",
-          100: "#ffe0e8",
-          200: "#ffc0d1",
-          300: "#ff80a3",
-          400: "#ff4070",
-          600: "#e6003a",
-          700: "#cc0033",
-          800: "#990026",
-          900: "#660019",
-          950: "#33000d",
+        "neon-silver": {
+          DEFAULT: "#E0E0E0",
+          50:  "#ffffff",
+          100: "#f5f5f5",
+          200: "#eeeeee",
+          300: "#e0e0e0",
+          400: "#bdbdbd",
+          600: "#9e9e9e",
+          700: "#757575",
+          800: "#616161",
+          900: "#424242",
+          950: "#212121",
         },
         // Secondary neon yellow accent
         "neon-yellow": {
@@ -48,9 +48,9 @@ export default {
         "border":  "#2C2C3A",
         "border-hover": "#4C4C64",
         // Text hierarchy
-        "text-primary":   "#FFFFFF",
-        "text-secondary": "#C4C4D4",
-        "text-muted":     "#787890",
+        "text-primary":   "#00E5FF",
+        "text-secondary": "#00B8D4",
+        "text-muted":     "#00838F",
         // Semantic
         "success": "#00C853",
         "warning": "#FFB300",
@@ -91,15 +91,15 @@ export default {
       // Box Shadow — Neon Glow Effects
       // -----------------------------------------------------------------------
       boxShadow: {
-        "neon-sm":  "0 0 8px rgba(255, 0, 64, 0.4)",
-        "neon":     "0 0 20px rgba(255, 0, 64, 0.5), 0 0 40px rgba(255, 0, 64, 0.2)",
-        "neon-lg":  "0 0 40px rgba(255, 0, 64, 0.6), 0 0 80px rgba(255, 0, 64, 0.3)",
+        "neon-sm":  "0 0 8px rgba(224, 224, 224, 0.4)",
+        "neon":     "0 0 20px rgba(224, 224, 224, 0.5), 0 0 40px rgba(224, 224, 224, 0.2)",
+        "neon-lg":  "0 0 40px rgba(224, 224, 224, 0.6), 0 0 80px rgba(224, 224, 224, 0.3)",
         "yellow-sm": "0 0 8px rgba(255, 230, 0, 0.4)",
         "yellow":    "0 0 20px rgba(255, 230, 0, 0.5), 0 0 40px rgba(255, 230, 0, 0.2)",
         "yellow-lg": "0 0 40px rgba(255, 230, 0, 0.6), 0 0 80px rgba(255, 230, 0, 0.3)",
         "card":     "0 4px 24px rgba(0, 0, 0, 0.6)",
         "card-hover": "0 8px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 230, 0, 0.2)",
-        "inner-neon": "inset 0 0 20px rgba(255, 0, 64, 0.1)",
+        "inner-neon": "inset 0 0 20px rgba(224, 224, 224, 0.1)",
       },
 
       // -----------------------------------------------------------------------
@@ -119,8 +119,8 @@ export default {
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
         "pulse-neon": {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(255, 0, 64, 0.5)" },
-          "50%":      { boxShadow: "0 0 40px rgba(255, 0, 64, 0.9), 0 0 60px rgba(255, 0, 64, 0.4)" },
+          "0%, 100%": { boxShadow: "0 0 20px rgba(224, 224, 224, 0.5)" },
+          "50%":      { boxShadow: "0 0 40px rgba(224, 224, 224, 0.9), 0 0 60px rgba(224, 224, 224, 0.4)" },
         },
         "shimmer": {
           "0%":   { backgroundPosition: "-200% 0" },
@@ -160,7 +160,7 @@ export default {
       // -----------------------------------------------------------------------
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-neon":   "linear-gradient(135deg, #FF0040 0%, #CC0033 100%)",
+        "gradient-neon":   "linear-gradient(135deg, #E0E0E0 0%, #9E9E9E 100%)",
         "gradient-dark":   "linear-gradient(180deg, #0F0F0F 0%, #080808 100%)",
         "shimmer-gradient":
           "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)",
@@ -192,17 +192,17 @@ export default {
       // Neon text glow
       addUtilities({
         ".neon-text": {
-          color: theme("colors.neon-red.DEFAULT"),
+          color: theme("colors.neon-silver.DEFAULT"),
           textShadow:
-            "0 0 10px rgba(255, 0, 64, 0.8), 0 0 20px rgba(255, 0, 64, 0.5), 0 0 40px rgba(255, 0, 64, 0.3)",
+            "0 0 10px rgba(224, 224, 224, 0.8), 0 0 20px rgba(224, 224, 224, 0.5), 0 0 40px rgba(224, 224, 224, 0.3)",
         },
         ".neon-text-sm": {
-          color: theme("colors.neon-red.DEFAULT"),
-          textShadow: "0 0 8px rgba(255, 0, 64, 0.6)",
+          color: theme("colors.neon-silver.DEFAULT"),
+          textShadow: "0 0 8px rgba(224, 224, 224, 0.6)",
         },
         ".neon-border": {
-          borderColor: theme("colors.neon-red.DEFAULT"),
-          boxShadow: "0 0 10px rgba(255, 0, 64, 0.4)",
+          borderColor: theme("colors.neon-silver.DEFAULT"),
+          boxShadow: "0 0 10px rgba(224, 224, 224, 0.4)",
         },
         ".glass": {
           background: "rgba(255, 255, 255, 0.03)",
@@ -240,15 +240,15 @@ export default {
           fontSize: "0.875rem",
           fontWeight: "600",
           letterSpacing: "0.025em",
-          color: "#FFFFFF",
-          background: theme("colors.neon-red.DEFAULT"),
-          border: `1px solid ${theme("colors.neon-red.DEFAULT")}`,
+          color: "#000000",
+          background: theme("colors.neon-silver.DEFAULT"),
+          border: `1px solid ${theme("colors.neon-silver.DEFAULT")}`,
           transition: "all 0.2s ease",
           cursor: "pointer",
           textDecoration: "none",
           "&:hover": {
-            background: theme("colors.neon-red.700"),
-            boxShadow: "0 0 20px rgba(255, 0, 64, 0.5)",
+            background: theme("colors.neon-silver.700"),
+            boxShadow: "0 0 20px rgba(224, 224, 224, 0.5)",
             transform: "translateY(-1px)",
           },
           "&:active": {
@@ -270,15 +270,15 @@ export default {
           fontSize: "0.875rem",
           fontWeight: "600",
           letterSpacing: "0.025em",
-          color: theme("colors.neon-red.DEFAULT"),
+          color: theme("colors.neon-silver.DEFAULT"),
           background: "transparent",
-          border: `1px solid ${theme("colors.neon-red.DEFAULT")}`,
+          border: `1px solid ${theme("colors.neon-silver.DEFAULT")}`,
           transition: "all 0.2s ease",
           cursor: "pointer",
           textDecoration: "none",
           "&:hover": {
-            background: "rgba(255, 0, 64, 0.1)",
-            boxShadow: "0 0 15px rgba(255, 0, 64, 0.3)",
+            background: "rgba(224, 224, 224, 0.1)",
+            boxShadow: "0 0 15px rgba(224, 224, 224, 0.3)",
           },
         },
         ".btn-ghost": {
@@ -311,7 +311,7 @@ export default {
           transition: "all 0.3s ease",
           "&:hover": {
             borderColor: theme("colors.border-hover"),
-            boxShadow: "0 8px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 64, 0.15)",
+            boxShadow: "0 8px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(224, 224, 224, 0.15)",
             transform: "translateY(-4px)",
           },
         },
@@ -327,8 +327,8 @@ export default {
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
           "&::placeholder": { color: theme("colors.text-muted") },
           "&:focus": {
-            borderColor: theme("colors.neon-red.DEFAULT"),
-            boxShadow: "0 0 0 3px rgba(255, 0, 64, 0.15)",
+            borderColor: theme("colors.neon-silver.DEFAULT"),
+            boxShadow: "0 0 0 3px rgba(224, 224, 224, 0.15)",
           },
         },
         ".badge": {
@@ -356,8 +356,8 @@ export default {
     "-translate-y-full",
     "scale-100",
     "scale-95",
-    { pattern: /bg-(neon-red|success|warning|danger|info)/ },
-    { pattern: /text-(neon-red|success|warning|danger|info)/ },
-    { pattern: /border-(neon-red|success|warning|danger|info)/ },
+    { pattern: /bg-(neon-silver|success|warning|danger|info)/ },
+    { pattern: /text-(neon-silver|success|warning|danger|info)/ },
+    { pattern: /border-(neon-silver|success|warning|danger|info)/ },
   ],
 };

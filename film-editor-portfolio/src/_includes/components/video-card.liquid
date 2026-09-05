@@ -15,67 +15,73 @@ Usage: render "components/video-card", project: project
   data-id="{{ project.id }}"
   data-project-card
 >
-  <!-- Thumbnail Link -->
-  <a
-    href="/projects/detail/?id={{ project.id }}"
-    class="block relative overflow-hidden aspect-video bg-card"
-    aria-label="Watch {{ project.title }}"
-    tabindex="0"
-  >
-    <!-- Thumbnail Image (lazy-loaded WebP) -->
-    <img
-      src="{{ thumb_url }}"
-      alt="{{ project.title }} — {{ project.category | categoryLabel }} by {{ project.client_name }}"
-      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-      loading="lazy"
-      decoding="async"
-      width="640"
-      height="360"
-      onerror="this.src='/assets/images/placeholder-thumb.svg'"
-    />
-
-    <!-- Dark overlay gradient -->
-    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent
-                opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-
-    <!-- Play button overlay -->
+  <!-- Thumbnail Container for inline playback -->
+  <div class="relative w-full aspect-video bg-card overflow-hidden">
     <div
-      class="absolute inset-0 flex items-center justify-center
-             opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-      aria-hidden="true"
+      class="absolute inset-0 block cursor-pointer"
+      data-video-poster
+      data-embed-src="{{ embed_url }}"
+      aria-label="Play {{ project.title }}"
+      tabindex="0"
     >
+      <!-- Thumbnail Image (lazy-loaded WebP) -->
+      <img
+        src="{{ thumb_url }}"
+        alt="{{ project.title }} — {{ project.category | categoryLabel }} by {{ project.client_name }}"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+        decoding="async"
+        width="640"
+        height="360"
+        onerror="this.src='/assets/images/placeholder-thumb.svg'"
+      />
+
+      <!-- Dark overlay gradient -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent
+                  opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+
+      <!-- Play button overlay -->
       <div
-        class="w-14 h-14 rounded-full bg-neon-red/90 flex items-center justify-center
-               shadow-neon transform scale-90 group-hover:scale-100 transition-transform duration-300"
+        class="absolute inset-0 flex items-center justify-center
+               opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        aria-hidden="true"
       >
-        <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
+        <button
+          class="w-14 h-14 rounded-full bg-neon-silver/90 flex items-center justify-center
+                 shadow-neon transform scale-90 group-hover:scale-100 transition-transform duration-300"
+          data-play-btn
+        >
+          <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Featured Badge -->
+      {% if project.is_featured %}
+      <div class="absolute top-3 left-3">
+        <span class="badge bg-neon-silver text-white text-2xs">
+          ★ Featured
+        </span>
+      </div>
+      {% endif %}
+
+      <!-- Category Badge -->
+      <div class="absolute top-3 right-3">
+        <span class="badge bg-black/60 text-text-secondary border border-white/10 text-2xs">
+          {{ project.category | categoryLabel }}
+        </span>
       </div>
     </div>
-
-    <!-- Featured Badge -->
-    {% if project.is_featured %}
-    <div class="absolute top-3 left-3">
-      <span class="badge bg-neon-red text-white text-2xs">
-        ★ Featured
-      </span>
-    </div>
-    {% endif %}
-
-    <!-- Category Badge -->
-    <div class="absolute top-3 right-3">
-      <span class="badge bg-black/60 text-text-secondary border border-white/10 text-2xs">
-        {{ project.category | categoryLabel }}
-      </span>
-    </div>
-  </a>
+    
+    <iframe class="absolute inset-0 w-full h-full hidden" title="{{ project.title }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="opacity:0; transition:opacity 0.5s;"></iframe>
+  </div>
 
   <!-- Card Body -->
   <div class="p-4 sm:p-5">
     <!-- Title -->
     <h3 class="font-semibold text-text-primary text-base leading-snug mb-1
-               group-hover:text-neon-red transition-colors duration-200">
+               group-hover:text-neon-silver transition-colors duration-200">
       <a href="/projects/detail/?id={{ project.id }}" class="stretched-link-text">
         {{ project.title }}
       </a>
@@ -125,7 +131,7 @@ Usage: render "components/video-card", project: project
       <!-- Watch Link -->
       <a
         href="/projects/detail/?id={{ project.id }}"
-        class="text-xs font-semibold text-neon-red hover:text-neon-red-600
+        class="text-xs font-semibold text-neon-silver hover:text-neon-silver-600
                flex items-center gap-1 transition-colors"
         aria-label="Watch {{ project.title }}"
       >

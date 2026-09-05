@@ -21,7 +21,7 @@ mode: "create" | "edit"
 
     <div class="form-field">
       <label for="field-title" class="form-label">
-        Project Title <span class="text-neon-red" aria-hidden="true">*</span>
+        Project Title <span class="text-neon-silver" aria-hidden="true">*</span>
       </label>
       <input
         type="text"
@@ -60,7 +60,7 @@ mode: "create" | "edit"
 
     <div class="form-field">
       <label for="field-category" class="form-label">
-        Category <span class="text-neon-red" aria-hidden="true">*</span>
+        Category <span class="text-neon-silver" aria-hidden="true">*</span>
       </label>
       <select
         id="field-category"
@@ -79,7 +79,7 @@ mode: "create" | "edit"
 
     <div class="form-field">
       <label for="field-year" class="form-label">
-        Year <span class="text-neon-red" aria-hidden="true">*</span>
+        Year <span class="text-neon-silver" aria-hidden="true">*</span>
       </label>
       <input
         type="number"
@@ -102,7 +102,7 @@ mode: "create" | "edit"
        ============================================================ -->
   <div class="glass rounded-xl p-5 border border-border space-y-4">
     <h3 class="text-sm font-semibold text-text-secondary flex items-center gap-2">
-      <svg class="w-4 h-4 text-neon-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-4 h-4 text-neon-silver" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -111,70 +111,19 @@ mode: "create" | "edit"
       Video Details
     </h3>
 
-    <!-- Provider Radio Buttons -->
+    <!-- Video URL field -->
     <div class="form-field">
-      <span class="form-label block mb-2">
-        Video Provider <span class="text-neon-red" aria-hidden="true">*</span>
-      </span>
-      <div class="flex items-center gap-6" role="radiogroup" aria-label="Video provider">
-        <label class="flex items-center gap-2.5 cursor-pointer group">
-          <input
-            type="radio"
-            name="video_provider"
-            value="youtube"
-            id="provider-youtube"
-            class="sr-only"
-            {% if project.video_provider == 'youtube' or project.video_provider == '' %}checked{% endif %}
-            required
-          />
-          <div class="provider-radio-indicator w-5 h-5 rounded-full border-2 border-border
-                      flex items-center justify-center transition-colors">
-            <div class="w-2.5 h-2.5 rounded-full bg-neon-red scale-0 transition-transform"></div>
-          </div>
-          <span class="flex items-center gap-1.5 text-sm text-text-secondary group-hover:text-white transition-colors">
-            <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
-            </svg>
-            YouTube
-          </span>
-        </label>
-
-        <label class="flex items-center gap-2.5 cursor-pointer group">
-          <input
-            type="radio"
-            name="video_provider"
-            value="vimeo"
-            id="provider-vimeo"
-            class="sr-only"
-            {% if project.video_provider == 'vimeo' %}checked{% endif %}
-          />
-          <div class="provider-radio-indicator w-5 h-5 rounded-full border-2 border-border
-                      flex items-center justify-center transition-colors">
-            <div class="w-2.5 h-2.5 rounded-full bg-neon-red scale-0 transition-transform"></div>
-          </div>
-          <span class="flex items-center gap-1.5 text-sm text-text-secondary group-hover:text-white transition-colors">
-            <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197c1.185-1.044 2.351-2.084 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.48 4.807l-.001.004z"/>
-            </svg>
-            Vimeo
-          </span>
-        </label>
-      </div>
-    </div>
-
-    <!-- Video ID field -->
-    <div class="form-field">
-      <label for="field-video-id" class="form-label">
-        Video ID <span class="text-neon-red" aria-hidden="true">*</span>
+      <label for="field-video-url" class="form-label">
+        Video URL <span class="text-neon-silver" aria-hidden="true">*</span>
       </label>
       <div class="relative">
         <input
           type="text"
-          id="field-video-id"
-          name="video_id"
+          id="field-video-url"
+          name="video_url"
           class="input-field pr-20"
-          placeholder="e.g. dQw4w9WgXcQ (YouTube) or 824804225 (Vimeo)"
-          value="{{ project.video_id }}"
+          placeholder="https://www.youtube.com/watch?v=... or https://vimeo.com/..."
+          value=""
           required
           autocomplete="off"
         />
@@ -182,17 +131,16 @@ mode: "create" | "edit"
           type="button"
           id="btn-preview-video"
           class="absolute right-2 top-1/2 -translate-y-1/2 text-2xs px-2 py-1 rounded
-                 bg-neon-red/20 text-neon-red hover:bg-neon-red/30 transition-colors font-medium"
+                 bg-neon-silver/20 text-neon-silver hover:bg-neon-silver/30 transition-colors font-medium"
           aria-label="Preview video"
         >
           Preview
         </button>
       </div>
       <p class="text-2xs text-text-muted mt-1">
-        YouTube: last part of youtu.be/<strong>VIDEO_ID</strong> &nbsp;·&nbsp;
-        Vimeo: vimeo.com/<strong>VIDEO_ID</strong>
+        Paste a full YouTube or Vimeo link.
       </p>
-      <p class="form-error hidden" id="error-video-id" role="alert"></p>
+      <p class="form-error hidden" id="error-video-url" role="alert"></p>
     </div>
 
     <!-- Video Preview Area (shown after clicking Preview) -->
@@ -246,7 +194,7 @@ mode: "create" | "edit"
        ============================================================ -->
   <div class="form-field">
     <label for="field-description" class="form-label">
-      Description <span class="text-neon-red" aria-hidden="true">*</span>
+      Description <span class="text-neon-silver" aria-hidden="true">*</span>
     </label>
     <textarea
       id="field-description"
@@ -300,7 +248,7 @@ mode: "create" | "edit"
           />
           <div
             class="w-10 h-5 rounded-full bg-border transition-colors
-                   peer-checked:bg-neon-red"
+                   peer-checked:bg-neon-silver"
           ></div>
           <div
             class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform

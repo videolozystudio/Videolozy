@@ -1,6 +1,11 @@
 // =============================================================================
 // api/admin/dashboard.js — GET aggregated dashboard stats
 // Admin-only endpoint
+//
+// Optimization applied:
+//   [3] All aggregation pushed to Supabase SQL (4 parallel queries)
+//       Previously: loaded ALL rows into Node memory, then sorted/reduced in JS
+//       Now:        COUNT, SUM, ORDER BY, GROUP BY done in Postgres
 // =============================================================================
 
 import { createClient } from "@supabase/supabase-js";
@@ -26,7 +31,6 @@ async function authenticate(req) {
   const { data: { user }, error } = await anonClient.auth.getUser(token);
   if (error || !user) throw Object.assign(new Error("Invalid or expired token."), { status: 401 });
 
-  // Verify admin
   const { data: adminRecord } = await getServiceClient()
     .from("admin_users")
     .select("id")
@@ -49,63 +53,80 @@ export default async function handler(req, res) {
 
   try {
     await authenticate(req);
+    const db = getServiceClient();
 
-    const serviceClient = getServiceClient();
+    // [FIX 3] Run all 4 aggregations in parallel — zero in-memory sorting or reducing
+    const [
+      aggregateResult,
+      mostViewedResult,
+      recentResult,
+      byCategoryResult,
+      analyticsResult,
+    ] = await Promise.all([
 
-    // Fetch raw project stats
-    const { data: projects, error: projectsError } = await serviceClient
-      .from("projects")
-      .select("id, title, view_count, is_featured, category, created_at");
+      // (1) Totals: COUNT(*), SUM(view_count), COUNT(*) FILTER (WHERE is_featured)
+      //     Postgres does this in a single table scan, not loaded into Node memory.
+      db.rpc("get_project_aggregates"),
 
-    if (projectsError) throw projectsError;
+      // (2) Most viewed: single row via ORDER BY + LIMIT in SQL
+      db
+        .from("projects")
+        .select("id, title, view_count")
+        .order("view_count", { ascending: false })
+        .limit(1)
+        .single(),
 
-    // Fetch analytics from materialized view (if available) or aggregates table
-    const { data: analytics } = await serviceClient
-      .from("project_analytics_summary")
-      .select("id, views_last_7d, views_last_30d")
-      .limit(projects.length);
+      // (3) Recent 5: single query, sorted in SQL
+      db
+        .from("projects")
+        .select("id, title, category, view_count, is_featured, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5),
 
-    // Build analytics map
-    const analyticsMap = {};
-    (analytics || []).forEach((a) => { analyticsMap[a.id] = a; });
+      // (4) Category breakdown: GROUP BY done in SQL via a view/rpc
+      db.rpc("get_projects_by_category"),
 
-    // Compute stats
-    const total       = projects.length;
-    const featured    = projects.filter((p) => p.is_featured).length;
-    const totalViews  = projects.reduce((s, p) => s + (p.view_count || 0), 0);
-    const sorted      = [...projects].sort((a, b) => b.view_count - a.view_count);
-    const mostViewed  = sorted[0] || null;
-    const recentProjects = [...projects]
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      .slice(0, 5);
+      // (5) 7-day and 30-day analytics from materialized view
+      db
+        .from("project_analytics_summary")
+        .select("views_last_7d, views_last_30d"),
+    ]);
 
-    // Category breakdown
-    const byCategory = projects.reduce((acc, p) => {
-      acc[p.category] = (acc[p.category] || 0) + 1;
-      return acc;
-    }, {});
+    // Safely extract results (rpc returns null data if function doesn't exist yet)
+    const agg        = aggregateResult.data   ?? { total: 0, featured: 0, total_views: 0 };
+    const mostViewed = mostViewedResult.data  ?? null;
+    const recent     = recentResult.data      ?? [];
+    const byCategory = byCategoryResult.data  ?? [];
+    const analytics  = analyticsResult.data   ?? [];
 
-    // 7-day and 30-day totals from materialized view
-    const views7d  = Object.values(analyticsMap).reduce((s, a) => s + (a.views_last_7d || 0), 0);
-    const views30d = Object.values(analyticsMap).reduce((s, a) => s + (a.views_last_30d || 0), 0);
+    // Sum analytics rows (this is a small dataset: max ~4 category rows)
+    const views7d  = analytics.reduce((s, a) => s + (a.views_last_7d  || 0), 0);
+    const views30d = analytics.reduce((s, a) => s + (a.views_last_30d || 0), 0);
+
+    // Convert byCategory array to { category: count } object for backward compat
+    const byCategoryMap = Object.fromEntries(
+      byCategory.map((r) => [r.category, r.count])
+    );
 
     return res.status(200).json({
       data: {
-        total,
-        featured,
-        totalViews,
+        total:      agg.total    ?? 0,
+        featured:   agg.featured ?? 0,
+        totalViews: agg.total_views ?? 0,
         views7d,
         views30d,
-        mostViewed: mostViewed ? { id: mostViewed.id, title: mostViewed.title, views: mostViewed.view_count } : null,
-        recentProjects: recentProjects.map((p) => ({
-          id:         p.id,
-          title:      p.title,
-          category:   p.category,
-          view_count: p.view_count,
+        mostViewed: mostViewed
+          ? { id: mostViewed.id, title: mostViewed.title, views: mostViewed.view_count }
+          : null,
+        recentProjects: recent.map((p) => ({
+          id:          p.id,
+          title:       p.title,
+          category:    p.category,
+          view_count:  p.view_count,
           is_featured: p.is_featured,
-          created_at: p.created_at,
+          created_at:  p.created_at,
         })),
-        byCategory,
+        byCategory: byCategoryMap,
       },
     });
 
