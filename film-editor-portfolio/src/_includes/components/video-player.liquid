@@ -1,8 +1,9 @@
-<!-- ============================================================
-     Video Player Component
-     Renders a responsive, lazy-loaded iframe embed.
-     Usage: {% render "components/video-player", project: project %}
-     ============================================================ -->
+{% comment %}
+============================================================
+Video Player Component
+Usage: render "components/video-player", project: project
+============================================================
+{% endcomment %}
 
 {% assign embed_src = project.video_id | embedUrl: project.video_provider %}
 

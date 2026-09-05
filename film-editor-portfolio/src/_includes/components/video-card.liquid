@@ -1,7 +1,9 @@
-<!-- ============================================================
-     Video Card Component
-     Usage: {% render "components/video-card", project: project %}
-     ============================================================ -->
+{% comment %}
+============================================================
+Video Card Component
+Usage: render "components/video-card", project: project
+============================================================
+{% endcomment %}
 
 {% assign embed_url = project.video_id | embedUrl: project.video_provider %}
 {% assign thumb_url = project.video_id | thumbnailUrl: project.video_provider, project.thumbnail_url %}
