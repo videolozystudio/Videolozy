@@ -1,0 +1,50 @@
+<!-- ============================================================
+     Contact Inquiries Panel
+     Shows recent form submissions from the Start a Project modal
+     ============================================================ -->
+<div class="mt-8">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-base font-semibold text-text-primary">Recent Inquiries</h2>
+    <button id="btn-refresh-inquiries" class="text-xs text-neon-silver hover:text-neon-silver-600 transition-colors flex items-center gap-1">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      Refresh
+    </button>
+  </div>
+
+  <div class="glass rounded-xl border border-border overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b border-border bg-card/50">
+            <th class="px-4 py-3 text-xs font-bold text-text-muted uppercase tracking-wider">Contact</th>
+            <th class="px-4 py-3 text-xs font-bold text-text-muted uppercase tracking-wider">Phone & Time</th>
+            <th class="px-4 py-3 text-xs font-bold text-text-muted uppercase tracking-wider">Project Query</th>
+            <th class="px-4 py-3 text-xs font-bold text-text-muted uppercase tracking-wider">Status</th>
+            <th class="px-4 py-3 text-xs font-bold text-text-muted uppercase tracking-wider text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="inquiries-table-body" class="divide-y divide-border">
+          <!-- Populated by JS -->
+          <tr>
+            <td colspan="5" class="px-4 py-8 text-center text-sm text-text-muted">
+              Loading inquiries...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Empty State -->
+    <div id="inquiries-empty-state" class="hidden py-12 text-center border-t border-border">
+      <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-card border border-border flex items-center justify-center">
+        <svg class="w-6 h-6 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <p class="text-sm font-medium text-text-primary">No new inquiries</p>
+      <p class="text-xs text-text-muted mt-1">When someone submits a project request, it will appear here.</p>
+    </div>
+  </div>
+</div>

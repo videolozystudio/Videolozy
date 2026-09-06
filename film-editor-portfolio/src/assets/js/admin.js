@@ -158,12 +158,27 @@ function initLoginPage() {
       if (error) throw error;
       if (!data.session) throw new Error("No session returned.");
 
+      // Log successful login attempt to Vercel
+      fetch('/api/admin/login-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, success: true })
+      }).catch(e => console.error('Failed to send login log:', e));
+
       window.location.replace("/admin/");
 
     } catch (err) {
       const msg = err.message?.includes("Invalid login")
         ? "Incorrect email or password."
         : err.message || "Sign in failed. Please try again.";
+        
+      // Log failed login attempt to Vercel
+      fetch('/api/admin/login-log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, success: false, errorMessage: msg })
+      }).catch(e => console.error('Failed to send login log:', e));
+        
       showLoginError(msg);
     } finally {
       setLoading(btn, false);
@@ -331,6 +346,152 @@ async function initDashboard() {
       icon?.classList.remove("animate-spin");
     }
   });
+
+  // Load inquiries panel
+  await initDashboardInquiries();
+}
+
+// =============================================================================
+// DASHBOARD INQUIRIES — Load and Realtime
+// =============================================================================
+async function initDashboardInquiries() {
+  const tableBody = document.getElementById("inquiries-table-body");
+  const emptyState = document.getElementById("inquiries-empty-state");
+  const refreshBtn = document.getElementById("btn-refresh-inquiries");
+  
+  if (!tableBody) return;
+
+  const loadInquiries = async () => {
+    try {
+      if (refreshBtn) {
+        refreshBtn.disabled = true;
+        refreshBtn.querySelector("svg")?.classList.add("animate-spin");
+      }
+      
+      const { data, error } = await supabase
+        .from("contact_inquiries")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(10);
+        
+      if (error) throw error;
+      
+      renderInquiries(data);
+      
+    } catch (err) {
+      console.error("Failed to load inquiries:", err);
+      showToast("Failed to load inquiries.", "error");
+    } finally {
+      if (refreshBtn) {
+        refreshBtn.disabled = false;
+        refreshBtn.querySelector("svg")?.classList.remove("animate-spin");
+      }
+    }
+  };
+
+  const renderInquiries = (inquiries) => {
+    if (!inquiries || !inquiries.length) {
+      tableBody.innerHTML = "";
+      emptyState?.classList.remove("hidden");
+      tableBody.parentElement.parentElement.classList.add("hidden"); // hide table container
+      return;
+    }
+    
+    emptyState?.classList.add("hidden");
+    tableBody.parentElement.parentElement.classList.remove("hidden");
+    
+    tableBody.innerHTML = inquiries.map(iq => {
+      const date = new Date(iq.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      const statusClass = iq.is_read ? "bg-card text-text-muted border-border" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
+      const statusText = iq.is_read ? "Read" : "New";
+      
+      return `
+        <tr class="hover:bg-card/50 transition-colors" data-id="${iq.id}">
+          <td class="px-4 py-3 align-top">
+            <div class="font-medium text-text-primary text-sm">${escHtml(iq.name)}</div>
+            <div class="text-xs text-text-muted mt-0.5"><a href="mailto:${escHtml(iq.email)}" class="hover:text-neon-silver">${escHtml(iq.email)}</a></div>
+            <div class="text-2xs text-text-muted mt-1">${date}</div>
+          </td>
+          <td class="px-4 py-3 align-top">
+            <div class="text-sm text-text-secondary">${escHtml(iq.phone || "—")}</div>
+            <div class="text-xs text-text-muted mt-1 whitespace-nowrap">${escHtml(iq.call_time || "—")}</div>
+          </td>
+          <td class="px-4 py-3 align-top max-w-[300px]">
+            <p class="text-sm text-text-secondary line-clamp-3 leading-relaxed">${escHtml(iq.query || "—")}</p>
+          </td>
+          <td class="px-4 py-3 align-top">
+            <span class="inline-flex px-2 py-1 rounded-md text-2xs font-bold uppercase tracking-wider border ${statusClass}">
+              ${statusText}
+            </span>
+          </td>
+          <td class="px-4 py-3 align-top text-right">
+            ${!iq.is_read ? `
+              <button class="btn-ghost text-xs px-3 py-1.5 whitespace-nowrap text-neon-silver hover:bg-neon-silver/10 mark-read-btn" data-id="${iq.id}">
+                Mark Read
+              </button>
+            ` : `<span class="text-xs text-text-muted">No action</span>`}
+          </td>
+        </tr>
+      `;
+    }).join("");
+    
+    // Wire up Mark Read buttons
+    document.querySelectorAll(".mark-read-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        const id = e.currentTarget.dataset.id;
+        const originalText = e.currentTarget.textContent;
+        e.currentTarget.textContent = "...";
+        
+        try {
+          const { error } = await supabase.from("contact_inquiries").update({ is_read: true }).eq("id", id);
+          if (error) throw error;
+          
+          showToast("Inquiry marked as read", "success");
+          loadInquiries(); // reload
+        } catch (err) {
+          e.currentTarget.textContent = originalText;
+          showToast("Failed to update status", "error");
+        }
+      });
+    });
+  };
+
+  // 1. Load initial data
+  await loadInquiries();
+  
+  // 2. Refresh button
+  refreshBtn?.addEventListener("click", loadInquiries);
+  
+  // 3. Supabase Realtime Subscription for new inquiries
+  const channel = supabase.channel('schema-db-changes')
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'contact_inquiries'
+      },
+      (payload) => {
+        // Play a small sound or trigger native notification if allowed
+        if (Notification.permission === "granted") {
+          new Notification("New Project Inquiry", {
+            body: `${payload.new.name} just submitted a new project request.`,
+            icon: "/assets/images/favicon.ico" // assuming there is a favicon
+          });
+        }
+        
+        showToast(`New inquiry received from ${payload.new.name}!`, "success", 8000);
+        
+        // Refresh the table automatically
+        loadInquiries();
+      }
+    )
+    .subscribe();
+    
+  // Request Notification permission if not already asked
+  if (Notification.permission === "default") {
+    Notification.requestPermission();
+  }
 }
 
 // =============================================================================

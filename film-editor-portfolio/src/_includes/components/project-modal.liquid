@@ -44,7 +44,7 @@
       </div>
 
       <!-- Form -->
-      <form id="project-form" class="space-y-6" onsubmit="event.preventDefault(); alert('Form submitted successfully!'); document.getElementById('project-modal-close').click();">
+      <form id="project-form" class="space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           
           <!-- Name -->
@@ -100,16 +100,16 @@
           </div>
         </div>
 
-        <!-- Address -->
+        <!-- Project Query -->
         <div class="space-y-2">
-          <label for="pm-address" class="block text-xs font-bold text-gray-300 uppercase tracking-widest">Address</label>
+          <label for="pm-query" class="block text-xs font-bold text-gray-300 uppercase tracking-widest">What do you want to develop?</label>
           <textarea
-            id="pm-address"
-            name="address"
-            rows="2"
+            id="pm-query"
+            name="query"
+            rows="3"
             required
             class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-yellow/50 focus:ring-1 focus:ring-neon-yellow/50 transition-all resize-none"
-            placeholder="Your organization address or location..."
+            placeholder="Tell us about your project vision, goals, and requirements..."
           ></textarea>
         </div>
 
@@ -178,6 +178,64 @@
         e.preventDefault();
         openProjectModal();
       });
+    });
+    
+    // Form Submission
+    const form = document.getElementById('project-form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+      
+      try {
+        const payload = {
+          name: document.getElementById('pm-name').value.trim(),
+          email: document.getElementById('pm-email').value.trim(),
+          phone: document.getElementById('pm-phone').value.trim(),
+          call_time: document.getElementById('pm-time').value.trim(),
+          query: document.getElementById('pm-query').value.trim()
+        };
+        
+        // Use the global supabase client instance initialized by the site
+        const { error } = await window.supabase.from('contact_inquiries').insert([payload]);
+        
+        if (error) throw error;
+        
+        // Show success state briefly before closing
+        submitBtn.textContent = 'Success!';
+        submitBtn.classList.replace('btn-yellow', 'bg-green-500');
+        submitBtn.classList.replace('text-black', 'text-white');
+        
+        setTimeout(() => {
+          form.reset();
+          closeProjectModal();
+          
+          // Reset button
+          setTimeout(() => {
+            submitBtn.textContent = originalText;
+            submitBtn.classList.replace('bg-green-500', 'btn-yellow');
+            submitBtn.classList.replace('text-white', 'text-black');
+            submitBtn.disabled = false;
+          }, 500);
+        }, 1500);
+        
+      } catch (err) {
+        console.error('Error submitting form:', err);
+        submitBtn.textContent = 'Error. Try again';
+        submitBtn.classList.replace('btn-yellow', 'bg-red-500');
+        submitBtn.classList.replace('text-black', 'text-white');
+        
+        setTimeout(() => {
+          submitBtn.textContent = originalText;
+          submitBtn.classList.replace('bg-red-500', 'btn-yellow');
+          submitBtn.classList.replace('text-white', 'text-black');
+          submitBtn.disabled = false;
+        }, 3000);
+      }
     });
   });
 </script>
