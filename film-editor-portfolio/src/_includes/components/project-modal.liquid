@@ -1,0 +1,183 @@
+<!-- ============================================================
+     Project Modal Component
+     ============================================================ -->
+<div
+  id="project-modal-backdrop"
+  class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 opacity-0 pointer-events-none transition-opacity duration-300"
+  style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(12px);"
+  aria-hidden="true"
+>
+  <!-- Modal Card with Parallax/Glassmorphism effect -->
+  <div
+    id="project-modal-card"
+    class="relative w-full max-w-2xl transform scale-95 opacity-0 transition-all duration-500 ease-out"
+  >
+    <!-- Background glowing orbs -->
+    <div class="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-neon-yellow/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-neon-silver/20 blur-3xl pointer-events-none"></div>
+    
+    <!-- Glass Card Container -->
+    <div class="relative bg-surface/80 border border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl overflow-hidden backdrop-blur-xl">
+      
+      <!-- Subtle top red bar for aesthetic -->
+      <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-neon-yellow via-neon-silver to-white/10"></div>
+      
+      <!-- Close Button -->
+      <button
+        id="project-modal-close"
+        class="absolute top-5 right-5 text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
+        aria-label="Close modal"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <h3 class="text-3xl font-black text-white tracking-tight mb-2">
+          Start a Project
+        </h3>
+        <p class="text-sm text-gray-400 font-medium tracking-wide">
+          Fill out the details below and we will get back to you to discuss your vision.
+        </p>
+      </div>
+
+      <!-- Form -->
+      <form id="project-form" class="space-y-6" onsubmit="event.preventDefault(); alert('Form submitted successfully!'); document.getElementById('project-modal-close').click();">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          
+          <!-- Name -->
+          <div class="space-y-2">
+            <label for="pm-name" class="block text-xs font-bold text-gray-300 uppercase tracking-widest">Name</label>
+            <input
+              type="text"
+              id="pm-name"
+              name="name"
+              required
+              class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-yellow/50 focus:ring-1 focus:ring-neon-yellow/50 transition-all"
+              placeholder="John Doe"
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="space-y-2">
+            <label for="pm-email" class="block text-xs font-bold text-gray-300 uppercase tracking-widest">Email</label>
+            <input
+              type="email"
+              id="pm-email"
+              name="email"
+              required
+              class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-yellow/50 focus:ring-1 focus:ring-neon-yellow/50 transition-all"
+              placeholder="john@example.com"
+            />
+          </div>
+
+          <!-- Phone Number -->
+          <div class="space-y-2">
+            <label for="pm-phone" class="block text-xs font-bold text-gray-300 uppercase tracking-widest">Phone Number</label>
+            <input
+              type="tel"
+              id="pm-phone"
+              name="phone"
+              required
+              class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-yellow/50 focus:ring-1 focus:ring-neon-yellow/50 transition-all"
+              placeholder="+1 (555) 000-0000"
+            />
+          </div>
+
+          <!-- Preferred Call Time -->
+          <div class="space-y-2">
+            <label for="pm-time" class="block text-xs font-bold text-gray-300 uppercase tracking-widest">Preferred Call Time</label>
+            <input
+              type="text"
+              id="pm-time"
+              name="call_time"
+              required
+              class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-yellow/50 focus:ring-1 focus:ring-neon-yellow/50 transition-all"
+              placeholder="e.g. Tomorrow at 2 PM PST"
+            />
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="space-y-2">
+          <label for="pm-address" class="block text-xs font-bold text-gray-300 uppercase tracking-widest">Address</label>
+          <textarea
+            id="pm-address"
+            name="address"
+            rows="2"
+            required
+            class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-yellow/50 focus:ring-1 focus:ring-neon-yellow/50 transition-all resize-none"
+            placeholder="Your organization address or location..."
+          ></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4">
+          <button
+            type="submit"
+            class="w-full btn-yellow py-4 text-sm uppercase tracking-widest font-black shadow-yellow-sm hover:shadow-yellow transition-all duration-300"
+          >
+            Submit Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const backdrop = document.getElementById('project-modal-backdrop');
+    const card = document.getElementById('project-modal-card');
+    const closeBtn = document.getElementById('project-modal-close');
+    
+    // Function to open modal
+    window.openProjectModal = function() {
+      backdrop.classList.remove('opacity-0', 'pointer-events-none');
+      backdrop.classList.add('opacity-100');
+      
+      card.classList.remove('scale-95', 'opacity-0');
+      card.classList.add('scale-100', 'opacity-100');
+      
+      // Add slight parallax effect on mouse move inside the card
+      document.addEventListener('mousemove', handleParallax);
+    };
+
+    // Function to close modal
+    window.closeProjectModal = function() {
+      backdrop.classList.remove('opacity-100');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+      
+      card.classList.remove('scale-100', 'opacity-100');
+      card.classList.add('scale-95', 'opacity-0');
+      
+      document.removeEventListener('mousemove', handleParallax);
+      // Reset transform
+      card.style.transform = 'scale(0.95) translate(0px, 0px)';
+    };
+
+    // Parallax handler
+    function handleParallax(e) {
+      if (backdrop.classList.contains('pointer-events-none')) return;
+      const x = (window.innerWidth / 2 - e.pageX) / 50;
+      const y = (window.innerHeight / 2 - e.pageY) / 50;
+      card.style.transform = `scale(1) translate(${x}px, ${y}px)`;
+    }
+
+    // Event Listeners
+    closeBtn.addEventListener('click', closeProjectModal);
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeProjectModal();
+    });
+
+    // Attach to all elements with data-trigger="project-modal"
+    document.querySelectorAll('[data-trigger="project-modal"]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openProjectModal();
+      });
+    });
+  });
+</script>
