@@ -27,7 +27,6 @@ export default {
   nav: [
     { label: "Work",    href: "/#work"    },
     { label: "About",   href: "/#about"   },
-    { label: "Contact", href: "/#contact" },
   ],
 
   // Video categories (drives filter buttons on homepage)
