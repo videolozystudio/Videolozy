@@ -19,7 +19,7 @@ export default {
 
   // Social links
   social: {
-    facebook:  process.env.SOCIAL_FACEBOOK  || "https://facebook.com/videolozy",
+    facebook:  process.env.SOCIAL_FACEBOOK  || "https://www.facebook.com/share/1CFJm9YVDz/",
     instagram: process.env.SOCIAL_INSTAGRAM || "https://www.instagram.com/videolozy?stkn=MWQ1dnVoemF6dmFvMw==",
     whatsapp:  process.env.SOCIAL_WHATSAPP  || "https://wa.me/919113197223",
     email:     process.env.CONTACT_EMAIL    || "Videolozystudio@gmail.com",
