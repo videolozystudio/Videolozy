@@ -26,6 +26,9 @@ Configuration (set before {% include %} in parent template):
   <!-- ── Static header: logo + headline ─────────────────────── -->
   <header class="ds-header">
 
+    <!-- CREATIVE ARCHIVE badge -->
+    <span class="ds-badge">🎬 CREATIVE ARCHIVE</span>
+
     <!-- Videolozy logo -->
     <a href="/" class="ds-logo" aria-label="Videolozy — Home">
       <svg class="ds-logo-mark" viewBox="0 0 40 40" fill="none"
@@ -40,8 +43,8 @@ Configuration (set before {% include %} in parent template):
         <rect x="31.5" y="6"  width="5.5" height="3.5" rx="1" fill="white" opacity="0.38"/>
         <rect x="31.5" y="12" width="5.5" height="3.5" rx="1" fill="white" opacity="0.38"/>
         <!-- Red base dot -->
-        <circle cx="20" cy="31" r="2.6" fill="#e63030"/>
-        <circle cx="20" cy="31" r="5"   fill="none" stroke="#e63030" stroke-width="1" opacity="0.3"/>
+        <circle cx="20" cy="31" r="2.6" fill="#FF0040"/>
+        <circle cx="20" cy="31" r="5"   fill="none" stroke="#FF0040" stroke-width="1" opacity="0.3"/>
       </svg>
       <span class="ds-logo-wordmark" aria-hidden="true">VIDEOLOZY</span>
     </a>
@@ -53,6 +56,9 @@ Configuration (set before {% include %} in parent template):
     </h2>
 
     <p class="ds-tagline">{{ _tagline }}</p>
+
+    <!-- CTA button -->
+    <a href="#work" class="ds-cta-btn" aria-label="Explore Our Studio">Explore Our Studio &rarr;</a>
 
   </header>
 
@@ -142,12 +148,54 @@ Configuration (set before {% include %} in parent template):
 
 /* ── Tagline ── */
 .ds-tagline {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: .14em;
-  color: rgba(255,255,255,.28);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: rgba(255,255,255,.42);
+  text-transform: none;
+  line-height: 1.55;
+  max-width: 440px;
+  margin-top: 10px;
+}
+
+/* ── Badge ── */
+.ds-badge {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .18em;
   text-transform: uppercase;
-  line-height: 1;
+  color: #FFE600;
+  background: rgba(255,230,0,.08);
+  border: 1px solid rgba(255,230,0,.35);
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-bottom: 22px;
+  backdrop-filter: blur(6px);
+}
+
+/* ── CTA Button ── */
+.ds-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #000;
+  background: #FFE600;
+  border: none;
+  text-decoration: none;
+  transition: background .2s, box-shadow .2s, transform .15s;
+  box-shadow: 0 0 18px rgba(255,230,0,.35);
+}
+.ds-cta-btn:hover {
+  background: #FFF066;
+  box-shadow: 0 0 28px rgba(255,230,0,.65);
+  transform: translateY(-1px);
 }
 
 /* ── Stage ── */
@@ -447,11 +495,11 @@ Configuration (set before {% include %} in parent template):
       <!-- Subtitle -->
       <text x="${w*.06}" y="${h*.73}"
         font-family="Inter,Arial,sans-serif" font-size="12" font-weight="300"
-        fill="rgba(255,255,255,.5)" letter-spacing="7">SHOWREEL 2024</text>
+        fill="rgba(255,255,255,.5)" letter-spacing="7">CREATIVE ARCHIVE</text>
       <!-- Bottom byline -->
       <text x="${w*.06}" y="${h*.91}"
         font-family="Inter,Arial,sans-serif" font-size="8.5" font-weight="500"
-        fill="rgba(255,255,255,.28)" letter-spacing="2">POST-PRODUCTION · BHUVAN BHASKAR</text>
+        fill="rgba(255,255,255,.28)" letter-spacing="2">AUDIO &amp; VIDEO PRODUCTION · VIDEOLOZY</text>
       <!-- Status dot -->
       <circle cx="${w*.91}" cy="${h*.12}" r="4.5" fill="#e63030" opacity=".85"/>
       <circle cx="${w*.91}" cy="${h*.12}" r="10"  fill="none" stroke="#e63030" stroke-width="1" opacity=".28"/>

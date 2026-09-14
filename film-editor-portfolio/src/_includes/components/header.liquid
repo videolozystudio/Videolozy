@@ -24,24 +24,35 @@
         aria-label="{{ site.name }} — Home"
         id="site-logo"
       >
-        <!-- Icon mark -->
-        <div
-          class="w-9 h-9 rounded-lg bg-gradient-to-br from-neon-yellow via-neon-silver to-neon-silver flex items-center justify-center
-                 shadow-yellow-sm group-hover:shadow-yellow transition-shadow duration-300"
+        <!-- Film-strip V mark — clean, modern -->
+        <svg
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-9 h-9 flex-shrink-0 group-hover:drop-shadow-[0_0_10px_rgba(255,0,64,0.55)] transition-all duration-300"
+          aria-hidden="true"
         >
-          <svg class="w-5 h-5 text-black font-extrabold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                  d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
-          </svg>
-        </div>
+          <!-- V shape -->
+          <path d="M7 9 L20 31 L33 9"
+                stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Sprocket holes left -->
+          <rect x="3"    y="6"  width="5.5" height="3.5" rx="1" fill="white" opacity="0.38"/>
+          <rect x="3"    y="12" width="5.5" height="3.5" rx="1" fill="white" opacity="0.38"/>
+          <!-- Sprocket holes right -->
+          <rect x="31.5" y="6"  width="5.5" height="3.5" rx="1" fill="white" opacity="0.38"/>
+          <rect x="31.5" y="12" width="5.5" height="3.5" rx="1" fill="white" opacity="0.38"/>
+          <!-- Neon red accent dot -->
+          <circle cx="20" cy="31" r="2.6" fill="#FF0040"/>
+          <circle cx="20" cy="31" r="5"   fill="none" stroke="#FF0040" stroke-width="1" opacity="0.3"/>
+        </svg>
 
         <!-- Wordmark -->
         <div class="leading-none">
           <span class="block text-base font-extrabold text-white tracking-tight">
             {{ site.brand }}
           </span>
-          <span class="block text-2xs text-neon-yellow font-bold tracking-widest uppercase">
-            Video & Audio Production
+          <span class="block text-2xs text-gray-400 font-medium tracking-widest uppercase">
+            Audio &amp; Video Production
           </span>
         </div>
       </a>

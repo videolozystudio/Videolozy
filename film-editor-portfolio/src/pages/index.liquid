@@ -1,7 +1,7 @@
 ---
 layout: client
-title: Film Editor Portfolio
-description: Award-winning film editor specializing in commercials, short films, music videos, and documentaries.
+title: Videolozy — An Audio and Video Production
+description: Founded in 2024, Videolozy is a creative audio and video production brand focused on cinematic storytelling. We specialize in video editing, wedding films, music videos, reels, sound design, and graphic design.
 permalink: /
 ---
 
@@ -48,29 +48,56 @@ permalink: /
   <!-- Hero Content -->
   <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
+    <!-- Logo Mark — Hero -->
+    <div
+      class="hero-parallax-logo flex justify-center mb-8 animate-fade-in"
+      style="animation-delay: 0s; opacity: 0; animation-fill-mode: forwards;"
+      data-parallax-speed="0.04"
+    >
+      <a href="/" aria-label="Videolozy — Home" class="inline-flex flex-col items-center gap-2 group">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 drop-shadow-[0_0_18px_rgba(255,230,0,0.4)] group-hover:drop-shadow-[0_0_28px_rgba(255,230,0,0.65)] transition-all duration-500" aria-hidden="true">
+          <!-- Film-strip V -->
+          <path d="M10 12 L30 48 L50 12" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Sprocket holes left -->
+          <rect x="3.5" y="8"  width="8" height="5" rx="1.5" fill="white" opacity="0.35"/>
+          <rect x="3.5" y="17" width="8" height="5" rx="1.5" fill="white" opacity="0.35"/>
+          <!-- Sprocket holes right -->
+          <rect x="48.5" y="8"  width="8" height="5" rx="1.5" fill="white" opacity="0.35"/>
+          <rect x="48.5" y="17" width="8" height="5" rx="1.5" fill="white" opacity="0.35"/>
+          <!-- Neon Red base dot -->
+          <circle cx="30" cy="48" r="3.8" fill="#FF0040"/>
+          <circle cx="30" cy="48" r="7"   fill="none" stroke="#FF0040" stroke-width="1.2" opacity="0.4"/>
+        </svg>
+      </a>
+    </div>
 
-
-    <!-- Main Headline -->
+    <!-- Main Headline with Parallax -->
     <h1
       id="hero-headline"
-      class="text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6
-             animate-fade-in"
+      class="hero-parallax-text text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-3
+             animate-fade-in text-white"
       style="animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards;"
+      data-parallax-speed="0.06"
     >
-      Crafting Visuals with
-      <br />
-      <span class="bg-gradient-to-r from-white via-neon-yellow to-neon-silver bg-clip-text text-transparent drop-shadow-lg">
-        Rhythm & Pacing.
-      </span>
+      VIDEOLOZY
     </h1>
 
-    <!-- Tagline -->
+    <!-- Subtitle Line -->
     <p
-      class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 font-normal leading-relaxed mb-10
-             animate-fade-in"
-      style="animation-delay: 0.25s; opacity: 0; animation-fill-mode: forwards;"
+      class="hero-parallax-text text-base sm:text-lg font-semibold tracking-[0.28em] uppercase text-gray-400 mb-4 animate-fade-in"
+      style="animation-delay: 0.18s; opacity: 0; animation-fill-mode: forwards;"
+      data-parallax-speed="0.05"
     >
-      {{ site.tagline }} — Led by founder <strong class="text-white">Bhuvan Bhaskar</strong>. Transforming raw footage into cinematic experiences with sound precision, color depth, and narrative impact.
+      An Audio and Video Production
+    </p>
+
+    <!-- Tagline Line 3 -->
+    <p
+      class="hero-parallax-text max-w-xl mx-auto text-base sm:text-lg text-gray-300 font-light leading-relaxed mb-10 animate-fade-in"
+      style="animation-delay: 0.28s; opacity: 0; animation-fill-mode: forwards;"
+      data-parallax-speed="0.035"
+    >
+      Where creativity meets precision in every frame.
     </p>
 
     <!-- CTA Buttons -->
@@ -86,10 +113,10 @@ permalink: /
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                 d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        Explore Portfolio Reel
+        Explore Our Studio
       </a>
-      <a href="#" class="btn-neon text-base px-8 py-3.5 w-full sm:w-auto" data-trigger="project-modal">
-        Start a Project
+      <a href="#contact" class="btn-neon text-base px-8 py-3.5 w-full sm:w-auto">
+        Contact Us
       </a>
     </div>
 
@@ -110,10 +137,10 @@ permalink: /
 <!-- ============================================================
      DESIGN SHOWCASE SECTION — Animated 3D card portfolio wall
      ============================================================ -->
-{% assign ds_hl1     = "A Design Partner" %}
-{% assign ds_hl2     = "You Can Trust." %}
+{% assign ds_hl1     = "Stories We" %}
+{% assign ds_hl2     = "Crafted." %}
 {% assign ds_anim_dur = "22s" %}
-{% assign ds_tagline  = "Post-Production Studio · Bhuvan Bhaskar" %}
+{% assign ds_tagline  = "Explore cinematic stories, branded visuals, wedding films, and creative productions crafted by Videolozy" %}
 {% include "components/design-showcase.liquid" %}
 
 <!-- ============================================================
@@ -172,22 +199,50 @@ permalink: /
     <!-- Section Header -->
     <div class="mb-12 lg:mb-16">
       <span class="yellow-pill-badge px-3.5 py-1 text-2xs font-bold uppercase tracking-widest mb-3 inline-block">
-        ⚡ PORTFOLIO & REELS
+        🎬 CREATIVE ARCHIVE
       </span>
       <h2
         id="work-heading"
         class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight"
       >
-        Selected Work
+        Explore Our Work
       </h2>
       <p class="mt-4 text-gray-300 max-w-xl text-base">
-        Explore a curated showcase of commercial campaigns, short narrative films, music videos, and feature documentaries.
+        Explore cinematic stories, branded visuals, wedding films, and creative productions crafted by Videolozy.
       </p>
     </div>
 
     <!-- Projects Grid Component -->
     {% include "components/video-grid.liquid" %}
 
+    <!-- End of Portfolio Closer -->
+    <div class="mt-20 flex flex-col items-center gap-4 text-center">
+      <div class="w-16 h-px bg-gradient-to-r from-transparent via-neon-yellow to-transparent"></div>
+      <p class="text-sm font-bold tracking-[0.30em] uppercase text-neon-yellow/80">The Story Continues</p>
+      <div class="w-16 h-px bg-gradient-to-r from-transparent via-neon-yellow to-transparent"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     QUOTE SECTION — Martin Scorsese
+     ============================================================ -->
+<section class="py-16 border-y border-white/10 bg-surface/50 relative overflow-hidden" aria-label="Director's quote">
+  <!-- Subtle ambient glow -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+    <div class="w-[40rem] h-40 bg-neon-yellow/5 blur-3xl rounded-full"></div>
+  </div>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+    <svg class="w-8 h-8 text-neon-yellow/50 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+    </svg>
+    <blockquote class="text-xl sm:text-2xl lg:text-3xl font-light text-white leading-relaxed italic mb-6">
+      "Cinema is the combination of what's on screen and what the audience feels between the cuts"
+    </blockquote>
+    <cite class="text-sm font-semibold text-neon-yellow tracking-widest uppercase not-italic">
+      — Martin Scorsese
+    </cite>
   </div>
 </section>
 
@@ -214,21 +269,23 @@ permalink: /
           id="about-heading"
           class="text-3xl sm:text-4xl font-bold text-white leading-tight mb-6"
         >
-          The Studio Behind
-          <br />the <span class="bg-gradient-to-r from-neon-yellow to-neon-silver bg-clip-text text-transparent">Master Cut.</span>
+          About Us
         </h2>
         <div class="space-y-4 text-gray-300 leading-relaxed text-base">
           <p>
-            Led by founder and lead editor <strong class="text-white">Bhuvan Bhaskar</strong>, <strong class="text-neon-yellow">Videolozy.in</strong> is a premier full-service post-production studio dedicated to high-impact visual storytelling.
+            Founded in 2024, <strong class="text-neon-yellow">Videolozy</strong> is a creative audio and video production brand focused on cinematic storytelling and modern visual experiences. We specialize in video editing, production, commercial ads, wedding films, music videos, reels, sound design, and graphic design.
           </p>
           <p>
-            We specialize in rhythm-driven editing, precision color grading, dynamic motion graphics, and immersive sound design. Every project is crafted to connect emotionally with audiences across screens worldwide.
+            At Videolozy, we combine creativity, precision, and emotion to craft content that not only looks visually stunning but also creates a lasting impact. From brands to creators, every project is designed with a unique cinematic approach that transforms ideas into compelling visual stories.
+          </p>
+          <p class="text-white font-medium italic">
+            Videolozy — Where creativity meets precision in every frame.
           </p>
         </div>
 
         <!-- Skills Tags -->
         <div class="mt-8 flex flex-wrap gap-2.5">
-          {% assign skills = "Adobe Premiere Pro,DaVinci Resolve Studio,After Effects,Color Grading,Sound Design,Motion Graphics,Commercial Editing,Documentary" | split: "," %}
+          {% assign skills = "Video Editing,Commercial Ads,Wedding Films,Music Videos,Reels,Sound Design,Graphic Design,Cinematic Production" | split: "," %}
           {% for skill in skills %}
           <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold yellow-pill-badge transition-colors hover:bg-neon-yellow hover:text-black">
             {{ skill }}
@@ -289,3 +346,48 @@ permalink: /
 </section>
 
 {% include "components/project-modal.liquid" %}
+
+<!-- ============================================================
+     HERO PARALLAX — Mouse tracking script
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  const heroSection = document.getElementById('hero');
+  if (!heroSection) return;
+
+  const parallaxEls = heroSection.querySelectorAll('[data-parallax-speed]');
+  if (!parallaxEls.length) return;
+
+  let cx = 0, cy = 0, tx = 0, ty = 0;
+  let rafId = null;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function onMouseMove(e) {
+    const rect = heroSection.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / rect.width  - 0.5;
+    const my = (e.clientY - rect.top)  / rect.height - 0.5;
+    tx = mx;
+    ty = my;
+  }
+
+  function tick() {
+    cx = lerp(cx, tx, 0.07);
+    cy = lerp(cy, ty, 0.07);
+
+    parallaxEls.forEach(el => {
+      const speed = parseFloat(el.dataset.parallaxSpeed) || 0.04;
+      const ox = cx * speed * 120;
+      const oy = cy * speed * 80;
+      el.style.transform = `translate(${ox}px, ${oy}px)`;
+    });
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  heroSection.addEventListener('mousemove', onMouseMove, { passive: true });
+  rafId = requestAnimationFrame(tick);
+})();
+</script>
