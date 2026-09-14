@@ -11,7 +11,9 @@
     "build": "npm run build:css && npm run build:eleventy",
     "build:css": "tailwindcss -i ./src/assets/css/styles.css -o ./_site/assets/css/styles.css --minify",
     "build:eleventy": "node --max-old-space-size=4096 node_modules/@11ty/eleventy/cmd.cjs",
-    "clean": "rimraf _site"
+    "clean": "rimraf _site",
+    "audit": "npm audit",
+    "audit:ci": "npm audit --audit-level=high"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.43.1",

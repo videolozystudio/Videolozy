@@ -2,13 +2,16 @@
 // api/admin/dashboard.js — GET aggregated dashboard stats
 // Admin-only endpoint
 //
-// Optimization applied:
-//   [3] All aggregation pushed to Supabase SQL (4 parallel queries)
-//       Previously: loaded ALL rows into Node memory, then sorted/reduced in JS
-//       Now:        COUNT, SUM, ORDER BY, GROUP BY done in Postgres
+// Security hardening applied (OWASP Top 10):
+//   [A01] CORS locked to known origins via cors.js
+//   [A07] Auth-specific strict rate limiter (5 attempts / 10 min)
+//   [A09] Centralized safe error handler — no internal leaks on 500s
 // =============================================================================
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient }        from "@supabase/supabase-js";
+import { applyCors }           from "../lib/cors.js";
+import { checkAuthRateLimit }  from "../lib/authRateLimiter.js";
+import { sendError }           from "../lib/errorHandler.js";
 
 function getServiceClient() {
   return createClient(
@@ -42,20 +45,24 @@ async function authenticate(req) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin",  "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Content-Type", "application/json");
-  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 
-  if (req.method === "OPTIONS") return res.status(204).end();
+  // [A01] CORS — restricted to known origins
+  const blocked = applyCors(req, res, { allowedMethods: "GET, OPTIONS" });
+  if (blocked) return;
+
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed." });
+
+  // [A07] Strict auth rate limiter — 5 attempts per 10 min per IP
+  const limited = await checkAuthRateLimit(req, res, "admin-dashboard");
+  if (limited) return;
 
   try {
     await authenticate(req);
     const db = getServiceClient();
 
-    // [FIX 3] Run all 4 aggregations in parallel — zero in-memory sorting or reducing
+    // Run all 4 aggregations in parallel — zero in-memory sorting or reducing
     const [
       aggregateResult,
       mostViewedResult,
@@ -65,7 +72,6 @@ export default async function handler(req, res) {
     ] = await Promise.all([
 
       // (1) Totals: COUNT(*), SUM(view_count), COUNT(*) FILTER (WHERE is_featured)
-      //     Postgres does this in a single table scan, not loaded into Node memory.
       db.rpc("get_project_aggregates"),
 
       // (2) Most viewed: single row via ORDER BY + LIMIT in SQL
@@ -92,18 +98,15 @@ export default async function handler(req, res) {
         .select("views_last_7d, views_last_30d"),
     ]);
 
-    // Safely extract results (rpc returns null data if function doesn't exist yet)
     const agg        = aggregateResult.data   ?? { total: 0, featured: 0, total_views: 0 };
     const mostViewed = mostViewedResult.data  ?? null;
     const recent     = recentResult.data      ?? [];
     const byCategory = byCategoryResult.data  ?? [];
     const analytics  = analyticsResult.data   ?? [];
 
-    // Sum analytics rows (this is a small dataset: max ~4 category rows)
     const views7d  = analytics.reduce((s, a) => s + (a.views_last_7d  || 0), 0);
     const views30d = analytics.reduce((s, a) => s + (a.views_last_30d || 0), 0);
 
-    // Convert byCategory array to { category: count } object for backward compat
     const byCategoryMap = Object.fromEntries(
       byCategory.map((r) => [r.category, r.count])
     );
@@ -131,7 +134,7 @@ export default async function handler(req, res) {
     });
 
   } catch (err) {
-    const status = err.status || 500;
-    return res.status(status).json({ error: err.message || "Internal server error." });
+    // [A09] Safe centralized error handler
+    return sendError(res, err, "api/admin/dashboard.js");
   }
 }

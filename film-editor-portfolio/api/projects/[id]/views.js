@@ -2,54 +2,62 @@
 // api/projects/[id]/views.js — POST: Increment view count
 // Public endpoint — no authentication required.
 // Uses Supabase RPC to atomically increment view_count.
+//
+// Security hardening applied (OWASP Top 10):
+//   [A01] CORS header set (POST-only endpoint)
+//   [A07] View deduplication migrated from in-memory Map → Upstash Redis
+//         (in-memory Map does NOT work across Vercel serverless instances)
+//   [A09] Safe error handler — no internal detail leaks
 // =============================================================================
 
 import { createClient } from "@supabase/supabase-js";
+import { getRedis }     from "../../lib/redis.js";
+import { sendError }    from "../../lib/errorHandler.js";
 
-// Prevent view count spamming: track IPs per project per hour in memory
-// In production, use Upstash Redis for distributed rate limiting.
-const viewLog = new Map(); // key: `${ip}:${projectId}`, value: timestamp
+// ---------------------------------------------------------------------------
+// Redis-backed view deduplication
+// Key: rl:view:{projectId}:{ip}  TTL: 1 hour
+// This replaces the previous in-memory Map that was broken on serverless.
+// ---------------------------------------------------------------------------
+const VIEW_DEDUP_TTL = 3600; // 1 hour in seconds
 
-function hasViewedRecently(ip, projectId) {
-  const key       = `${ip}:${projectId}`;
-  const lastSeen  = viewLog.get(key);
-  const ONE_HOUR  = 60 * 60 * 1000;
-
-  if (lastSeen && Date.now() - lastSeen < ONE_HOUR) return true;
-
-  viewLog.set(key, Date.now());
-
-  // Cleanup old entries to avoid memory leak
-  if (viewLog.size > 10_000) {
-    const threshold = Date.now() - ONE_HOUR;
-    for (const [k, ts] of viewLog.entries()) {
-      if (ts < threshold) viewLog.delete(k);
-    }
+async function hasViewedRecently(ip, projectId) {
+  const key = `view:${projectId}:${ip}`;
+  try {
+    const redis  = getRedis();
+    // SET key 1 EX 3600 NX  — only sets if NOT already present
+    const result = await redis.set(key, 1, { ex: VIEW_DEDUP_TTL, nx: true });
+    // result === "OK" → first view (key was NOT present) → count it
+    // result === null  → already viewed within window → skip
+    return result === null;
+  } catch (err) {
+    console.error("[views.js] Redis dedup error — allowing view:", err.message);
+    return false; // fail open
   }
-
-  return false;
 }
 
 export default async function handler(req, res) {
+  // [A01] CORS — only POST allowed, open origin (public endpoint)
   res.setHeader("Access-Control-Allow-Origin",  "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Content-Type", "application/json");
 
   if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed." });
+  if (req.method !== "POST")   return res.status(405).json({ error: "Method not allowed." });
 
   const { id } = req.query;
 
-  // Validate UUID
+  // [A04] Validate UUID
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   if (!id || !UUID_RE.test(id)) {
     return res.status(400).json({ error: "Invalid project ID." });
   }
 
-  // De-duplicate views from the same IP within 1 hour
-  const clientIp = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
-  if (hasViewedRecently(clientIp, id)) {
+  // [A07] Redis-backed deduplication (works across all Vercel instances)
+  const clientIp = (req.headers["x-forwarded-for"] ?? "").split(",")[0].trim() || "unknown";
+  const alreadyCounted = await hasViewedRecently(clientIp, id);
+  if (alreadyCounted) {
     return res.status(200).json({ message: "View already counted recently." });
   }
 
@@ -60,7 +68,6 @@ export default async function handler(req, res) {
       { auth: { persistSession: false } }
     );
 
-    // Call the atomic RPC function defined in the SQL migration
     const { error } = await supabase.rpc("increment_view_count", {
       p_project_id: id,
     });
@@ -70,7 +77,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ message: "View counted." });
 
   } catch (err) {
-    console.error("[views.js] Error:", err.message);
-    return res.status(500).json({ error: "Failed to increment view count." });
+    // [A09] Safe error handler
+    return sendError(res, err, "api/projects/[id]/views.js");
   }
 }

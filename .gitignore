@@ -28,3 +28,9 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Database schema & migrations (Security: do not expose DB structure publicly)
+supabase/migrations/
+**/supabase/migrations/
+*.sql
+**/*.sql

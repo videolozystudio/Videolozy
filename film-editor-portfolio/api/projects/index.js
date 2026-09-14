@@ -2,13 +2,51 @@
 // api/projects/index.js — GET all projects / POST create project
 // Vercel Serverless Function
 //
-// Optimizations applied:
-//   [1] Redis-backed rate limiter (replaces in-memory Map)
-//   [2] Cursor-based pagination (replaces offset-based .range())
+// Security hardening applied (OWASP Top 10):
+//   [A01] CORS locked to known origins for write methods (via cors.js)
+//   [A03] Parameterized queries via Supabase SDK — SQL injection safe
+//   [A04] Input validation: URL format, enum whitelist, length caps, year range
+//   [A07] Redis-backed rate limiter (replaces in-memory Map)
+//   [A09] Centralized safe error handler — no internal leaks on 500s
+//   [A10] thumbnail_url restricted to known video CDN hostnames (SSRF prevention)
 // =============================================================================
 
-import { createClient } from "@supabase/supabase-js";
-import { checkRateLimit } from "../lib/rateLimiter.js";
+import { createClient }      from "@supabase/supabase-js";
+import { checkRateLimit }    from "../lib/rateLimiter.js";
+import { applyCors }         from "../lib/cors.js";
+import { sendError }         from "../lib/errorHandler.js";
+
+// ---------------------------------------------------------------------------
+// Allowed thumbnail URL hostnames (SSRF guard — A10)
+// Only YouTube and Vimeo CDN hostnames are valid thumbnail sources.
+// ---------------------------------------------------------------------------
+const ALLOWED_THUMBNAIL_HOSTS = new Set([
+  "img.youtube.com",
+  "i.ytimg.com",
+  "i.vimeocdn.com",
+  "vumbnail.com",
+]);
+
+/**
+ * Validates that thumbnail_url is a safe, https URL pointing to a known CDN.
+ * Returns a sanitized string or null if invalid/empty.
+ * @param {string} raw
+ * @returns {string|null}
+ */
+function validateThumbnailUrl(raw) {
+  if (!raw || typeof raw !== "string") return "";
+  const trimmed = raw.trim();
+  if (trimmed === "") return "";
+
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol !== "https:") return null; // must be HTTPS
+    if (!ALLOWED_THUMBNAIL_HOSTS.has(url.hostname)) return null; // must be known CDN
+    return trimmed;
+  } catch {
+    return null; // unparseable URL
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Supabase Client Factory
@@ -37,12 +75,12 @@ async function authenticate(req) {
   const authHeader = req.headers["authorization"] || "";
   const token      = authHeader.replace(/^Bearer\s+/i, "").trim();
 
-  if (!token) throw new Error("Missing authorization token.");
+  if (!token) throw Object.assign(new Error("Missing authorization token."), { status: 401 });
 
   const anonClient = getServerClient(false);
   const { data: { user }, error } = await anonClient.auth.getUser(token);
 
-  if (error || !user) throw new Error("Invalid or expired token.");
+  if (error || !user) throw Object.assign(new Error("Invalid or expired token."), { status: 401 });
   return user;
 }
 
@@ -57,7 +95,7 @@ async function requireAdmin(user) {
     .eq("user_id", user.id)
     .single();
 
-  if (error || !data) throw new Error("Insufficient permissions. Admin access required.");
+  if (error || !data) throw Object.assign(new Error("Insufficient permissions. Admin access required."), { status: 403 });
   return true;
 }
 
@@ -65,15 +103,13 @@ async function requireAdmin(user) {
 // Handler
 // ---------------------------------------------------------------------------
 export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader("Access-Control-Allow-Origin",  "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Content-Type", "application/json");
 
-  if (req.method === "OPTIONS") return res.status(204).end();
+  // [A01] CORS — open for GET, restricted for POST
+  const blocked = applyCors(req, res, { allowedMethods: "GET, POST, OPTIONS" });
+  if (blocked) return;
 
-  // [FIX 1] Redis rate limiter — works across all Vercel instances / cold starts
+  // [A07] General rate limiter
   const limited = await checkRateLimit(req, res);
   if (limited) return;
 
@@ -85,10 +121,13 @@ export default async function handler(req, res) {
       const {
         category,
         limit    = "12",
-        // [FIX 2] cursor = sort_order of the last item seen (replaces offset)
         cursor   = null,
         order    = "sort_order",
       } = req.query;
+
+      // [A04] Validate order column against allowlist to prevent column injection
+      const ALLOWED_ORDER_COLS = new Set(["sort_order", "created_at", "view_count", "year"]);
+      const safeOrder = ALLOWED_ORDER_COLS.has(order) ? order : "sort_order";
 
       const pageSize = Math.min(Math.max(parseInt(limit, 10) || 12, 1), 100);
       const supabase = getServerClient(false);
@@ -99,30 +138,34 @@ export default async function handler(req, res) {
           "id, title, description, category, video_provider, video_id, " +
           "thumbnail_url, client_name, year, view_count, is_featured, sort_order, created_at"
         )
-        .order(order, { ascending: true })
+        .order(safeOrder, { ascending: true })
         .limit(pageSize);
 
       // Cursor: only fetch rows after the last seen sort_order value
       if (cursor !== null && cursor !== "") {
-        query = query.gt(order, parseInt(cursor, 10));
+        query = query.gt(safeOrder, parseInt(cursor, 10));
       }
 
       if (category && category !== "all") {
+        // [A04] Validate category against allowlist before using as filter
+        const VALID_CATEGORIES = ["commercial", "short-film", "music-video", "documentary"];
+        if (!VALID_CATEGORIES.includes(category)) {
+          return res.status(400).json({ error: "Invalid category value." });
+        }
         query = query.eq("category", category);
       }
 
       const { data, error } = await query;
       if (error) throw error;
 
-      // Return the next cursor so the client knows where to resume
       const nextCursor = data.length === pageSize
-        ? (data[data.length - 1]?.[order] ?? null)
+        ? (data[data.length - 1]?.[safeOrder] ?? null)
         : null;
 
       return res.status(200).json({
         data,
         count:      data.length,
-        nextCursor, // null means no more pages
+        nextCursor,
       });
     }
 
@@ -145,14 +188,22 @@ export default async function handler(req, res) {
         });
       }
 
+      // [A10] Validate thumbnail URL against allowed CDN hostnames
+      const thumbnailUrl = validateThumbnailUrl(body.thumbnail_url);
+      if (thumbnailUrl === null) {
+        return res.status(400).json({
+          error: "Invalid thumbnail_url. Must be an https:// URL from a supported video CDN.",
+        });
+      }
+
       const payload = {
         title:          String(title).trim().slice(0, 200),
-        description:    String(body.description || "").trim(),
+        description:    String(body.description || "").trim().slice(0, 5000),
         category:       ["commercial", "short-film", "music-video", "documentary"].includes(category)
                           ? category : null,
         video_provider: ["youtube", "vimeo"].includes(video_provider) ? video_provider : null,
-        video_id:       String(video_id).trim(),
-        thumbnail_url:  String(body.thumbnail_url || "").trim(),
+        video_id:       String(video_id).trim().slice(0, 100),
+        thumbnail_url:  thumbnailUrl,
         client_name:    String(body.client_name || "").trim().slice(0, 100),
         year:           parseInt(year, 10),
         is_featured:    Boolean(body.is_featured),
@@ -178,11 +229,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed." });
 
   } catch (err) {
-    const status = err.message?.includes("Missing authorization") ? 401
-                 : err.message?.includes("Invalid or expired")    ? 401
-                 : err.message?.includes("Insufficient permissions") ? 403
-                 : 500;
-
-    return res.status(status).json({ error: err.message || "Internal server error." });
+    // [A09] Safe centralized error handler
+    return sendError(res, err, "api/projects/index.js");
   }
 }

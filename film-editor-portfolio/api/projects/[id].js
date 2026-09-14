@@ -1,9 +1,48 @@
 // =============================================================================
 // api/projects/[id].js — GET single / PUT update / DELETE project
 // Vercel Serverless Function
+//
+// Security hardening applied (OWASP Top 10):
+//   [A01] CORS locked to known origins for write methods (via cors.js)
+//   [A03] Parameterized queries via Supabase SDK — SQL injection safe
+//   [A04] Input validation: URL format, enum whitelist, length caps
+//   [A09] Centralized safe error handler — no internal leaks on 500s
+//   [A10] thumbnail_url restricted to known video CDN hostnames (SSRF prevention)
 // =============================================================================
 
 import { createClient } from "@supabase/supabase-js";
+import { applyCors }    from "../lib/cors.js";
+import { sendError }    from "../lib/errorHandler.js";
+
+// ---------------------------------------------------------------------------
+// Allowed thumbnail URL hostnames (SSRF guard — A10)
+// ---------------------------------------------------------------------------
+const ALLOWED_THUMBNAIL_HOSTS = new Set([
+  "img.youtube.com",
+  "i.ytimg.com",
+  "i.vimeocdn.com",
+  "vumbnail.com",
+]);
+
+/**
+ * Validates that thumbnail_url is a safe, https URL pointing to a known CDN.
+ * @param {string} raw
+ * @returns {string|null}
+ */
+function validateThumbnailUrl(raw) {
+  if (!raw || typeof raw !== "string") return "";
+  const trimmed = raw.trim();
+  if (trimmed === "") return "";
+
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol !== "https:") return null;
+    if (!ALLOWED_THUMBNAIL_HOSTS.has(url.hostname)) return null;
+    return trimmed;
+  } catch {
+    return null;
+  }
+}
 
 function getServerClient(useServiceRole = false) {
   return createClient(
@@ -33,16 +72,15 @@ async function requireAdmin(user) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin",  "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Content-Type", "application/json");
 
-  if (req.method === "OPTIONS") return res.status(204).end();
+  // [A01] CORS — open for GET, restricted for PUT/DELETE
+  const blocked = applyCors(req, res, { allowedMethods: "GET, PUT, DELETE, OPTIONS" });
+  if (blocked) return;
 
   const { id } = req.query;
 
-  // Validate UUID format
+  // [A04] Validate UUID format
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   if (!id || !UUID_RE.test(id)) {
     return res.status(400).json({ error: "Invalid or missing project ID." });
@@ -91,17 +129,27 @@ export default async function handler(req, res) {
         }
       }
 
-      // Sanitize
-      if (payload.title)          payload.title = String(payload.title).trim().slice(0, 200);
-      if (payload.description)    payload.description = String(payload.description).trim();
-      if (payload.video_id)       payload.video_id = String(payload.video_id).trim();
-      if (payload.thumbnail_url)  payload.thumbnail_url = String(payload.thumbnail_url).trim();
-      if (payload.client_name)    payload.client_name = String(payload.client_name).trim().slice(0, 100);
-      if (payload.year)           payload.year = parseInt(payload.year, 10);
-      if (payload.sort_order !== undefined) payload.sort_order = parseInt(payload.sort_order, 10) || 0;
+      // [A04] Sanitize and validate all fields
+      if (payload.title !== undefined)       payload.title = String(payload.title).trim().slice(0, 200);
+      if (payload.description !== undefined) payload.description = String(payload.description).trim().slice(0, 5000);
+      if (payload.video_id !== undefined)    payload.video_id = String(payload.video_id).trim().slice(0, 100);
+      if (payload.client_name !== undefined) payload.client_name = String(payload.client_name).trim().slice(0, 100);
+      if (payload.year !== undefined)        payload.year = parseInt(payload.year, 10);
+      if (payload.sort_order !== undefined)  payload.sort_order = parseInt(payload.sort_order, 10) || 0;
       if (payload.is_featured !== undefined) payload.is_featured = Boolean(payload.is_featured);
 
-      // Validate enum fields if present
+      // [A10] Validate thumbnail URL
+      if (payload.thumbnail_url !== undefined) {
+        const safeUrl = validateThumbnailUrl(payload.thumbnail_url);
+        if (safeUrl === null) {
+          return res.status(400).json({
+            error: "Invalid thumbnail_url. Must be an https:// URL from a supported video CDN.",
+          });
+        }
+        payload.thumbnail_url = safeUrl;
+      }
+
+      // [A04] Validate enum fields if present
       if (payload.category && !["commercial", "short-film", "music-video", "documentary"].includes(payload.category)) {
         return res.status(400).json({ error: "Invalid category value." });
       }
@@ -145,7 +193,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed." });
 
   } catch (err) {
-    const status = err.status || 500;
-    return res.status(status).json({ error: err.message || "Internal server error." });
+    // [A09] Safe centralized error handler
+    return sendError(res, err, "api/projects/[id].js");
   }
 }
