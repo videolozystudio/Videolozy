@@ -45,6 +45,10 @@ export function brandStrip() {
       name: "The Shades",
       img: '<img src="/assets/images/brands/the-shades.png" alt="The Shades" class="h-14 w-auto object-contain rounded-md" />',
     },
+    {
+      name: "Golden Lion Motion Pictures",
+      img: '<img src="/assets/images/brands/golden-lion.jpg" alt="Golden Lion Motion Pictures" class="h-14 w-auto object-contain rounded-md" />',
+    },
   ];
 
   const items = brands
