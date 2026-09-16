@@ -13,40 +13,129 @@ export function videolozyLogo(size) {
   : s === "splash" ? "w-64 sm:w-80 h-auto"
   :                  "w-auto h-10";
 
-  return [
-    `<svg viewBox="0 0 320 340" fill="none" xmlns="http://www.w3.org/2000/svg"`,
-    ` class="${cls} drop-shadow-[0_0_14px_rgba(255,165,0,0.35)]"`,
-    ` aria-label="Videolozy Logo" role="img">`,
-    `<defs>`,
-    `<linearGradient id="vl-s" x1="60" y1="20" x2="140" y2="200" gradientUnits="userSpaceOnUse">`,
-    `<stop offset="0%" stop-color="#FFF"/><stop offset="40%" stop-color="#D8D8D8"/><stop offset="100%" stop-color="#9A9A9A"/>`,
-    `</linearGradient>`,
-    `<linearGradient id="vl-f" x1="200" y1="20" x2="240" y2="200" gradientUnits="userSpaceOnUse">`,
-    `<stop offset="0%" stop-color="#555"/><stop offset="100%" stop-color="#1A1A1A"/>`,
-    `</linearGradient>`,
-    `<linearGradient id="vl-o" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">`,
-    `<stop offset="0%" stop-color="#FFB300"/><stop offset="100%" stop-color="#E07800"/>`,
-    `</linearGradient>`,
-    `</defs>`,
-    `<polygon points="48,18 92,18 160,195 134,215" fill="url(#vl-s)"/>`,
-    `<polygon points="92,18 100,18 168,205 160,195" fill="#B0B0B0" opacity="0.7"/>`,
-    `<polygon points="272,18 228,18 160,195 178,210" fill="url(#vl-f)"/>`,
-    `<rect x="228" y="18" width="44" height="16" rx="3" fill="#3A3A3A"/>`,
-    `<rect x="234" y="22" width="10" height="8" rx="2" fill="#111" opacity="0.9"/>`,
-    `<rect x="250" y="22" width="10" height="8" rx="2" fill="#111" opacity="0.9"/>`,
-    `<rect x="238" y="44" width="10" height="8" rx="2" fill="#111" opacity="0.8"/>`,
-    `<rect x="252" y="44" width="10" height="8" rx="2" fill="#111" opacity="0.7"/>`,
-    `<rect x="240" y="66" width="10" height="8" rx="2" fill="#111" opacity="0.7"/>`,
-    `<rect x="243" y="88" width="9" height="7" rx="2" fill="#111" opacity="0.6"/>`,
-    `<rect x="246" y="108" width="8" height="6" rx="2" fill="#111" opacity="0.5"/>`,
-    `<polygon points="144,30 180,30 162,62" fill="url(#vl-o)"/>`,
-    `<text x="42" y="258" font-family="Arial Black,Impact,sans-serif" font-size="52" font-weight="900" letter-spacing="2" fill="#FFF">VIDEO</text>`,
-    `<text x="181" y="258" font-family="Arial Black,Impact,sans-serif" font-size="52" font-weight="900" letter-spacing="2" fill="#F0A000">LOZY</text>`,
-    `<line x1="42" y1="278" x2="72" y2="278" stroke="#888" stroke-width="1.5"/>`,
-    `<text x="160" y="282" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" letter-spacing="3.5" fill="#888">AUDIO AND VIDEO PRODUCTION</text>`,
-    `<line x1="248" y1="278" x2="278" y2="278" stroke="#888" stroke-width="1.5"/>`,
-    `</svg>`,
-  ].join("");
+  // SVG faithfully recreated from the actual Videolozy logo:
+  // - Big "V" mark: silver/white left arm + dark film-strip right arm
+  // - Orange play-button triangle in the V notch at top
+  // - "VIDEO" (white) + "LOZY" (amber) bold wordmark
+  // - "AUDIO AND VIDEO PRODUCTION" subtitle with decorative rules
+  const svg = `<svg viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg"
+  class="${cls}" aria-label="Videolozy Logo" role="img">
+  <defs>
+    <!-- Silver gradient for left arm -->
+    <linearGradient id="vl-silver" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="45%"  stop-color="#D4D4D4"/>
+      <stop offset="100%" stop-color="#8C8C8C"/>
+    </linearGradient>
+    <!-- Film-strip dark gradient for right arm -->
+    <linearGradient id="vl-film" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#5A5A5A"/>
+      <stop offset="40%"  stop-color="#333333"/>
+      <stop offset="100%" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <!-- Sheen on outer edge of right arm -->
+    <linearGradient id="vl-sheen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#7A7A7A"/>
+      <stop offset="100%" stop-color="#3A3A3A"/>
+    </linearGradient>
+    <!-- Amber/orange gradient for play button -->
+    <linearGradient id="vl-amber" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#FFC845"/>
+      <stop offset="100%" stop-color="#E07800"/>
+    </linearGradient>
+  </defs>
+
+  <!-- =====================================================
+       LEFT ARM of the V  (silver / white metallic)
+       Outer-left: (58,12) → (222,288)
+       Inner-right: (148,12) → (248,288)
+       ===================================================== -->
+  <polygon
+    points="58,12 148,12 248,288 222,288"
+    fill="url(#vl-silver)"
+  />
+  <!-- Subtle inner-edge highlight bevel -->
+  <polygon
+    points="136,12 148,12 248,288 238,288"
+    fill="rgba(255,255,255,0.28)"
+  />
+
+  <!-- =====================================================
+       RIGHT ARM of the V  (dark film-strip)
+       Inner-left: (362,12) → (272,288)
+       Outer-right: (454,12) → (298,288)
+       ===================================================== -->
+  <!-- Main body -->
+  <polygon
+    points="362,12 454,12 298,288 272,288"
+    fill="url(#vl-film)"
+  />
+  <!-- Outer-edge sheen strip (rightmost ~18px of arm) -->
+  <polygon
+    points="440,12 454,12 298,288 287,288"
+    fill="url(#vl-sheen)"
+  />
+
+  <!-- Film sprocket holes  ─  7 rectangular perforations
+       along the outer (right) edge of the right arm.
+       Each hole is rotated ~-30° to follow the arm's diagonal. -->
+  <g fill="#111111" opacity="0.88">
+    <rect x="423" y="22"  width="20" height="11" rx="2" transform="rotate(-30 423 22)"/>
+    <rect x="407" y="58"  width="20" height="11" rx="2" transform="rotate(-30 407 58)"/>
+    <rect x="391" y="94"  width="20" height="11" rx="2" transform="rotate(-30 391 94)"/>
+    <rect x="375" y="130" width="20" height="11" rx="2" transform="rotate(-30 375 130)"/>
+    <rect x="359" y="166" width="20" height="11" rx="2" transform="rotate(-30 359 166)"/>
+    <rect x="343" y="202" width="20" height="11" rx="2" transform="rotate(-30 343 202)"/>
+    <rect x="327" y="238" width="20" height="11" rx="2" transform="rotate(-30 327 238)"/>
+  </g>
+
+  <!-- =====================================================
+       ORANGE PLAY-BUTTON TRIANGLE
+       Sits in the V-notch at the top, between the two arms.
+       Points to the right like a media play button.
+       ===================================================== -->
+  <polygon
+    points="160,22 160,94 212,58"
+    fill="url(#vl-amber)"
+  />
+
+  <!-- =====================================================
+       WORDMARK  —  "VIDEO" white + "LOZY" amber
+       ===================================================== -->
+  <text
+    x="68" y="372"
+    font-family="'Arial Black','Arial',Impact,sans-serif"
+    font-size="72"
+    font-weight="900"
+    letter-spacing="3"
+    fill="#FFFFFF"
+  >VIDEO</text>
+  <text
+    x="297" y="372"
+    font-family="'Arial Black','Arial',Impact,sans-serif"
+    font-size="72"
+    font-weight="900"
+    letter-spacing="3"
+    fill="#F0A000"
+  >LOZY</text>
+
+  <!-- =====================================================
+       SUBTITLE — decorative rules + tagline
+       ===================================================== -->
+  <line x1="68"  y1="394" x2="112" y2="394" stroke="#777" stroke-width="1.5"/>
+  <text
+    x="260" y="399"
+    text-anchor="middle"
+    font-family="Arial,sans-serif"
+    font-size="13"
+    font-weight="400"
+    letter-spacing="4"
+    fill="#888888"
+  >AUDIO AND VIDEO PRODUCTION</text>
+  <line x1="408" y1="394" x2="452" y2="394" stroke="#777" stroke-width="1.5"/>
+</svg>`;
+
+  return svg;
 }
 
 /** Infinite scrolling brand collaboration strip */
