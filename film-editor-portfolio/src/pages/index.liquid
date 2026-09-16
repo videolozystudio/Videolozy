@@ -55,8 +55,7 @@ permalink: /
       data-parallax-speed="0.04"
     >
       <a href="/" aria-label="Videolozy — Home" class="inline-flex flex-col items-center gap-2 group">
-        {% assign logo_size = "hero" %}
-        {% include "components/logo.liquid" %}
+        {% videolozyLogo "hero" %}
       </a>
     </div>
 
@@ -175,7 +174,7 @@ permalink: /
 <!-- ============================================================
      BRAND COLLABORATION STRIP
      ============================================================ -->
-{% include "components/brand-strip.liquid" %}
+{% brandStrip %}
 
 <!-- ============================================================
      WORK / VIDEO GRID SECTION

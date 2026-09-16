@@ -24,9 +24,8 @@
         aria-label="{{ site.name }} — Home"
         id="site-logo"
       >
-        <!-- SVG Logo Component -->
-        {% assign logo_size = "header" %}
-        {% include "components/logo.liquid" %}
+        <!-- SVG Logo Shortcode (defined in svgShortcodes.js, not a Liquid include) -->
+        {% videolozyLogo "header" %}
       </a>
 
       <!-- Desktop Navigation -->

@@ -4,6 +4,7 @@
 import { EleventyHtmlBasePlugin } from "@11ty/eleventy";
 import { readFileSync, existsSync } from "fs";
 import { resolve } from "path";
+import { videolozyLogo, brandStrip } from "./svgShortcodes.js";
 
 // Load .env file for local development (Vercel injects vars automatically in production)
 const envPath = resolve(process.cwd(), ".env");
@@ -138,6 +139,13 @@ export default function (eleventyConfig) {
   eleventyConfig.addShortcode("neon", (text) => {
     return `<span class="neon-text">${text}</span>`;
   });
+
+  // SVG logo — defined in svgShortcodes.js to keep large SVG out of Liquid
+  // parser and prevent OOM during build. Usage: {% videolozyLogo "header" %}
+  eleventyConfig.addShortcode("videolozyLogo", videolozyLogo);
+
+  // Brand strip marquee. Usage: {% brandStrip %}
+  eleventyConfig.addShortcode("brandStrip", brandStrip);
 
   // ---------------------------------------------------------------------------
   // Template Formats
