@@ -65,7 +65,8 @@ export function brandStrip() {
     `.brand-fade-right{background:linear-gradient(to left,#001226,transparent)}`,
     `#brand-modal.show{opacity:1;pointer-events:auto;}`,
     `#brand-modal.show #brand-modal-card{transform:scale(1) perspective(1000px) rotateX(0) rotateY(0);}`,
-    `#brand-modal-content img { height: 16rem !important; max-height: 40vh; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain; }`
+    `#brand-modal-content img { height: 10rem !important; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain; }`,
+    `@media (min-width: 640px) { #brand-modal-content img { height: 16rem !important; } }`
   ].join("");
 
   const js = `(function(){
@@ -80,7 +81,7 @@ export function brandStrip() {
     document.body.addEventListener('click', function(e) {
       var item = e.target.closest('.brand-logo-item');
       if(item) {
-        mcontent.innerHTML = '<div class="mb-6">' + item.getAttribute('data-brand-img') + '</div><h3 class="text-2xl font-bold text-white">' + item.getAttribute('data-brand-name') + '</h3>';
+        mcontent.innerHTML = '<div class="mb-4 sm:mb-6 w-full flex justify-center">' + item.getAttribute('data-brand-img') + '</div><h3 class="text-xl sm:text-2xl font-bold text-white px-2">' + item.getAttribute('data-brand-name') + '</h3>';
         m.classList.add('show');
       } else if (e.target.closest('#brand-modal-close') || e.target === m) {
         m.classList.remove('show');
@@ -103,16 +104,16 @@ export function brandStrip() {
   return [
     `<section class="py-10 relative overflow-hidden border-y border-cyan-500/30" style="background: radial-gradient(ellipse at center, #00284d 0%, #001226 100%);" aria-label="Brand collaborations">`,
     `<div class="text-center mb-6"><span class="text-2xs font-bold tracking-[0.25em] uppercase text-cyan-400">Trusted Collaborations</span></div>`,
-    `<div class="brand-fade-left absolute inset-y-0 left-0 w-24 z-10 pointer-events-none" aria-hidden="true"></div>`,
-    `<div class="brand-fade-right absolute inset-y-0 right-0 w-24 z-10 pointer-events-none" aria-hidden="true"></div>`,
+    `<div class="brand-fade-left absolute inset-y-0 left-0 w-16 sm:w-24 z-10 pointer-events-none" aria-hidden="true"></div>`,
+    `<div class="brand-fade-right absolute inset-y-0 right-0 w-16 sm:w-24 z-10 pointer-events-none" aria-hidden="true"></div>`,
     `<div class="brand-marquee-outer overflow-hidden" role="list" aria-label="Collaborating brands">`,
-    `<div id="brand-marquee-track" class="brand-marquee-track flex items-center gap-16">${items}</div>`,
+    `<div id="brand-marquee-track" class="brand-marquee-track flex items-center gap-12 sm:gap-16">${items}</div>`,
     `</div>`,
     `
-    <div id="brand-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
-      <div id="brand-modal-card" class="white-glass-card rounded-2xl p-10 max-w-lg w-[90%] transform scale-90 transition-transform duration-200 ease-out relative shadow-[0_0_40px_rgba(0,229,255,0.3)] border border-cyan-500/50">
-         <button id="brand-modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl font-bold leading-none">&times;</button>
-         <div id="brand-modal-content" class="relative z-10 text-center flex flex-col items-center">
+    <div id="brand-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 px-4">
+      <div id="brand-modal-card" class="white-glass-card rounded-2xl p-6 sm:p-10 max-w-lg w-full transform scale-90 transition-transform duration-200 ease-out relative shadow-[0_0_40px_rgba(0,229,255,0.3)] border border-cyan-500/50">
+         <button id="brand-modal-close" class="absolute top-3 right-4 sm:top-4 sm:right-5 text-gray-400 hover:text-white text-3xl font-bold leading-none" aria-label="Close modal">&times;</button>
+         <div id="brand-modal-content" class="relative z-10 text-center flex flex-col items-center w-full">
          </div>
       </div>
     </div>
