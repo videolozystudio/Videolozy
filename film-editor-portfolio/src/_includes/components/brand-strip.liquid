@@ -2,6 +2,8 @@
      Brand Collaboration Strip — Infinite Horizontal Marquee
      Brands: Capture Stories | Heaven Production | Art & Culture Bihar
              BackBenchers Ent. | The Shades
+     NOTE: JS duplicates the strip at runtime for seamless loop
+           (avoids doubling the HTML at build time)
      ============================================================ -->
 
 <section class="py-10 relative overflow-hidden border-y border-white/10" aria-label="Brand collaborations">
@@ -12,350 +14,171 @@
   </div>
 
   <!-- Gradient fade edges -->
-  <div class="absolute inset-y-0 left-0 w-24 z-10 pointer-events-none"
-       style="background: linear-gradient(to right, var(--color-void, #050505), transparent);" aria-hidden="true"></div>
-  <div class="absolute inset-y-0 right-0 w-24 z-10 pointer-events-none"
-       style="background: linear-gradient(to left, var(--color-void, #050505), transparent);" aria-hidden="true"></div>
+  <div class="brand-fade-left absolute inset-y-0 left-0 w-24 z-10 pointer-events-none" aria-hidden="true"></div>
+  <div class="brand-fade-right absolute inset-y-0 right-0 w-24 z-10 pointer-events-none" aria-hidden="true"></div>
 
-  <!-- Marquee Track -->
-  <div class="brand-marquee-wrapper overflow-hidden">
-    <div class="brand-marquee-track flex items-center gap-16">
-
-      <!-- ===== SET 1 ===== -->
+  <!-- Marquee Track — JS will clone the inner ul for seamless loop -->
+  <div class="brand-marquee-outer overflow-hidden" role="list" aria-label="Collaborating brands">
+    <div id="brand-marquee-track" class="brand-marquee-track flex items-center gap-16">
 
       <!-- 1. Capture Stories -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="Capture Stories">
-        <svg viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto">
-          <defs>
-            <style>@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&amp;family=Cormorant+Garamond:wght@600&amp;display=swap');</style>
-          </defs>
-          <!-- Elegant italic C swash -->
-          <text x="10" y="58" font-family="'Georgia', 'Times New Roman', serif" font-size="52"
-                font-style="italic" font-weight="700" fill="white" letter-spacing="-2">Capture</text>
-          <!-- STORIES spaced caps -->
-          <text x="52" y="78" font-family="'Arial', sans-serif" font-size="13"
-                font-weight="600" letter-spacing="6" fill="white" opacity="0.85">STORIES</text>
+      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center" role="listitem" title="Capture Stories">
+        <svg viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto" aria-label="Capture Stories">
+          <text x="10" y="58" font-family="Georgia,Times New Roman,serif" font-size="52" font-style="italic" font-weight="700" fill="white" letter-spacing="-2">Capture</text>
+          <text x="52" y="78" font-family="Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="6" fill="white" opacity="0.85">STORIES</text>
         </svg>
       </div>
 
-      <!-- Divider dot -->
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
+      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-400/40" aria-hidden="true"></div>
 
       <!-- 2. Heaven Production -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="Heaven Production">
-        <svg viewBox="0 0 260 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto">
+      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center" role="listitem" title="Heaven Production">
+        <svg viewBox="0 0 260 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto" aria-label="Heaven Production">
           <defs>
-            <linearGradient id="bp-wing-grad" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="bp-wg" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#E0D8C8"/>
               <stop offset="100%" stop-color="#8A8070"/>
             </linearGradient>
           </defs>
-          <!-- Left wing -->
-          <path d="M8,48 C15,30 28,22 42,28 C34,35 28,42 26,52 C20,46 14,44 8,48Z" fill="url(#bp-wing-grad)" opacity="0.9"/>
-          <path d="M12,52 C22,36 38,28 52,34 C42,40 36,48 34,58 C26,50 18,48 12,52Z" fill="url(#bp-wing-grad)" opacity="0.75"/>
-          <path d="M18,56 C30,42 46,36 60,40 C50,46 44,54 42,62 C34,56 26,52 18,56Z" fill="url(#bp-wing-grad)" opacity="0.6"/>
-
-          <!-- Right wing (mirrored) -->
-          <path d="M252,48 C245,30 232,22 218,28 C226,35 232,42 234,52 C240,46 246,44 252,48Z" fill="url(#bp-wing-grad)" opacity="0.9"/>
-          <path d="M248,52 C238,36 222,28 208,34 C218,40 224,48 226,58 C234,50 242,48 248,52Z" fill="url(#bp-wing-grad)" opacity="0.75"/>
-          <path d="M242,56 C230,42 214,36 200,40 C210,46 216,54 218,62 C226,56 234,52 242,56Z" fill="url(#bp-wing-grad)" opacity="0.6"/>
-
-          <!-- Halo above text -->
+          <!-- Wings -->
+          <path d="M8,48 C15,30 28,22 42,28 C34,35 28,42 26,52 C20,46 14,44 8,48Z" fill="url(#bp-wg)" opacity="0.9"/>
+          <path d="M14,53 C24,37 40,29 54,35 C44,41 38,49 36,59 C28,51 20,49 14,53Z" fill="url(#bp-wg)" opacity="0.7"/>
+          <path d="M252,48 C245,30 232,22 218,28 C226,35 232,42 234,52 C240,46 246,44 252,48Z" fill="url(#bp-wg)" opacity="0.9"/>
+          <path d="M246,53 C236,37 220,29 206,35 C216,41 222,49 224,59 C232,51 240,49 246,53Z" fill="url(#bp-wg)" opacity="0.7"/>
+          <!-- Halo -->
           <ellipse cx="130" cy="18" rx="14" ry="5" stroke="#E0D8C8" stroke-width="2" fill="none" opacity="0.8"/>
-
-          <!-- "Heaven" script text -->
-          <text x="130" y="55" text-anchor="middle"
-                font-family="'Georgia', 'Palatino', serif" font-size="32"
-                font-style="italic" font-weight="700" fill="#EEE8D8" letter-spacing="1">Heaven</text>
-
-          <!-- PRODUCTION -->
-          <text x="130" y="72" text-anchor="middle"
-                font-family="'Arial', sans-serif" font-size="11"
-                font-weight="800" letter-spacing="5" fill="#E0D8C8" opacity="0.85">PRODUCTION</text>
+          <text x="130" y="55" text-anchor="middle" font-family="Georgia,Palatino,serif" font-size="32" font-style="italic" font-weight="700" fill="#EEE8D8" letter-spacing="1">Heaven</text>
+          <text x="130" y="72" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="800" letter-spacing="5" fill="#E0D8C8" opacity="0.85">PRODUCTION</text>
         </svg>
       </div>
 
-      <!-- Divider dot -->
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
+      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-400/40" aria-hidden="true"></div>
 
       <!-- 3. Art & Culture Dept, Bihar -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="Art & Culture Department, Govt. of Bihar">
-        <svg viewBox="0 0 220 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto">
+      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center" role="listitem" title="Art &amp; Culture Department, Govt. of Bihar">
+        <svg viewBox="0 0 220 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto" aria-label="Art and Culture Department, Govt. of Bihar">
           <defs>
-            <linearGradient id="bp-bihar-gold" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id="bp-gold" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#D4AF37"/>
               <stop offset="100%" stop-color="#C17F24"/>
             </linearGradient>
           </defs>
-          <!-- Ashoka Stambha simplified emblem -->
-          <g transform="translate(18, 5)">
-            <!-- Pillar base -->
-            <rect x="16" y="50" width="18" height="5" rx="1" fill="url(#bp-bihar-gold)"/>
-            <!-- Pillar shaft -->
-            <rect x="21" y="20" width="8" height="32" rx="1" fill="url(#bp-bihar-gold)"/>
-            <!-- Capital top -->
-            <ellipse cx="25" cy="20" rx="12" ry="5" fill="url(#bp-bihar-gold)"/>
-            <!-- Abacus -->
-            <rect x="14" y="14" width="22" height="6" rx="1" fill="url(#bp-bihar-gold)"/>
-            <!-- Lions (simplified as arcs) -->
-            <path d="M10,14 Q14,6 18,10 Q14,12 10,14Z" fill="url(#bp-bihar-gold)"/>
-            <path d="M40,14 Q36,6 32,10 Q36,12 40,14Z" fill="url(#bp-bihar-gold)"/>
-            <!-- Dharma wheel -->
-            <circle cx="25" cy="8" r="5" stroke="url(#bp-bihar-gold)" stroke-width="1.5" fill="none"/>
-            <line x1="25" y1="3" x2="25" y2="13" stroke="url(#bp-bihar-gold)" stroke-width="1"/>
-            <line x1="20" y1="8" x2="30" y2="8" stroke="url(#bp-bihar-gold)" stroke-width="1"/>
+          <!-- Simplified Ashoka pillar emblem -->
+          <g transform="translate(18,5)">
+            <rect x="16" y="50" width="18" height="5" rx="1" fill="url(#bp-gold)"/>
+            <rect x="21" y="20" width="8" height="32" rx="1" fill="url(#bp-gold)"/>
+            <ellipse cx="25" cy="20" rx="12" ry="5" fill="url(#bp-gold)"/>
+            <rect x="14" y="14" width="22" height="6" rx="1" fill="url(#bp-gold)"/>
+            <path d="M10,14 Q14,6 18,10 Q14,12 10,14Z" fill="url(#bp-gold)"/>
+            <path d="M40,14 Q36,6 32,10 Q36,12 40,14Z" fill="url(#bp-gold)"/>
+            <circle cx="25" cy="8" r="5" stroke="url(#bp-gold)" stroke-width="1.5" fill="none"/>
+            <line x1="25" y1="3" x2="25" y2="13" stroke="url(#bp-gold)" stroke-width="1"/>
+            <line x1="20" y1="8" x2="30" y2="8" stroke="url(#bp-gold)" stroke-width="1"/>
           </g>
-
-          <!-- Hindi text: कला एवं संस्कृति विभाग -->
-          <text x="72" y="32" font-family="'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif"
-                font-size="13" font-weight="600" fill="url(#bp-bihar-gold)" letter-spacing="0.5">कला एवं संस्कृति विभाग</text>
-
-          <!-- English subtitle -->
-          <text x="72" y="50" font-family="'Arial', sans-serif"
-                font-size="11" font-weight="600" fill="white" opacity="0.9" letter-spacing="0.3">Art &amp; Culture Dept.</text>
-          <text x="72" y="65" font-family="'Arial', sans-serif"
-                font-size="10" fill="white" opacity="0.6" letter-spacing="0.3">Govt. of Bihar</text>
-
-          <!-- Decorative bottom border -->
-          <line x1="72" y1="72" x2="210" y2="72" stroke="url(#bp-bihar-gold)" stroke-width="0.8" opacity="0.4"/>
+          <text x="72" y="32" font-family="Noto Sans Devanagari,Arial Unicode MS,sans-serif" font-size="13" font-weight="600" fill="url(#bp-gold)" letter-spacing="0.5">कला एवं संस्कृति विभाग</text>
+          <text x="72" y="50" font-family="Arial,sans-serif" font-size="11" font-weight="600" fill="white" opacity="0.9">Art &amp; Culture Dept.</text>
+          <text x="72" y="65" font-family="Arial,sans-serif" font-size="10" fill="white" opacity="0.6">Govt. of Bihar</text>
+          <line x1="72" y1="72" x2="210" y2="72" stroke="url(#bp-gold)" stroke-width="0.8" opacity="0.4"/>
         </svg>
       </div>
 
-      <!-- Divider dot -->
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
+      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-400/40" aria-hidden="true"></div>
 
       <!-- 4. BackBenchers Ent. -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="BackBenchers Entertainment">
-        <svg viewBox="0 0 180 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto">
+      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center" role="listitem" title="BackBenchers Entertainment">
+        <svg viewBox="0 0 180 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto" aria-label="BackBenchers Entertainment">
           <defs>
-            <linearGradient id="bp-bb-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#888888"/>
+            <linearGradient id="bp-bb" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#888"/>
               <stop offset="100%" stop-color="#222233"/>
             </linearGradient>
           </defs>
-
-          <!-- Left B — film-strip style -->
-          <g transform="translate(12, 6)">
-            <!-- Film strip left edge -->
-            <rect x="0" y="0" width="6" height="54" rx="2" fill="#444"/>
-            <!-- Sprocket holes -->
-            <rect x="1" y="4"  width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="11" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="18" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="25" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="32" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="39" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="46" width="4" height="3" rx="1" fill="#111"/>
-            <!-- B letter -->
-            <text x="6" y="46" font-family="'Arial Black', Impact, sans-serif"
-                  font-size="52" font-weight="900" fill="url(#bp-bb-grad)">B</text>
-          </g>
-
-          <!-- Right B — film-strip style -->
-          <g transform="translate(86, 6)">
-            <!-- Film strip left edge -->
-            <rect x="0" y="0" width="6" height="54" rx="2" fill="#444"/>
-            <!-- Sprocket holes -->
-            <rect x="1" y="4"  width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="11" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="18" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="25" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="32" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="39" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="46" width="4" height="3" rx="1" fill="#111"/>
-            <!-- B letter -->
-            <text x="6" y="46" font-family="'Arial Black', Impact, sans-serif"
-                  font-size="52" font-weight="900" fill="url(#bp-bb-grad)">B</text>
-          </g>
-
-          <!-- BACKBENCHERS ENT. text -->
-          <text x="90" y="82" text-anchor="middle"
-                font-family="'Arial Black', Impact, sans-serif" font-size="10"
-                font-weight="900" letter-spacing="2" fill="white">BACKBENCHERS ENT.</text>
+          <!-- Left B with film strip -->
+          <rect x="12" y="6" width="6" height="54" rx="2" fill="#444"/>
+          <rect x="13" y="10" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="13" y="17" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="13" y="24" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="13" y="31" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="13" y="38" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="13" y="45" width="4" height="3" rx="1" fill="#111"/>
+          <text x="18" y="52" font-family="Arial Black,Impact,sans-serif" font-size="52" font-weight="900" fill="url(#bp-bb)">B</text>
+          <!-- Right B with film strip -->
+          <rect x="86" y="6" width="6" height="54" rx="2" fill="#444"/>
+          <rect x="87" y="10" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="87" y="17" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="87" y="24" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="87" y="31" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="87" y="38" width="4" height="3" rx="1" fill="#111"/>
+          <rect x="87" y="45" width="4" height="3" rx="1" fill="#111"/>
+          <text x="92" y="52" font-family="Arial Black,Impact,sans-serif" font-size="52" font-weight="900" fill="url(#bp-bb)">B</text>
+          <text x="90" y="82" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-size="10" font-weight="900" letter-spacing="2" fill="white">BACKBENCHERS ENT.</text>
         </svg>
       </div>
 
-      <!-- Divider dot -->
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
+      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-400/40" aria-hidden="true"></div>
 
       <!-- 5. The Shades -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="The Shades">
-        <svg viewBox="0 0 260 70" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-12 w-auto">
+      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center" role="listitem" title="The Shades">
+        <svg viewBox="0 0 260 70" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-12 w-auto" aria-label="The Shades">
           <defs>
-            <filter id="bp-shades-rough" x="-5%" y="-5%" width="110%" height="110%">
+            <filter id="bp-rough" x="-5%" y="-5%" width="110%" height="110%">
               <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="2" result="noise"/>
               <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
             </filter>
           </defs>
-          <!-- Distressed brush-stroke text -->
-          <text x="12" y="52"
-                font-family="'Impact', 'Arial Black', sans-serif"
-                font-size="46" font-weight="900" font-style="italic"
-                letter-spacing="3"
-                fill="#C8C8C8"
-                filter="url(#bp-shades-rough)"
-          >THE SHADES</text>
-          <!-- Underline scratch -->
-          <line x1="12" y1="58" x2="248" y2="58" stroke="#C8C8C8" stroke-width="2" opacity="0.3" filter="url(#bp-shades-rough)"/>
+          <text x="12" y="52" font-family="Impact,Arial Black,sans-serif" font-size="46" font-weight="900" font-style="italic" letter-spacing="3" fill="#C8C8C8" filter="url(#bp-rough)">THE SHADES</text>
+          <line x1="12" y1="58" x2="248" y2="58" stroke="#C8C8C8" stroke-width="2" opacity="0.3" filter="url(#bp-rough)"/>
         </svg>
       </div>
 
-      <!-- Divider dot -->
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
+      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-400/40" aria-hidden="true"></div>
 
-      <!-- ===== SET 2 (duplicate for seamless loop) ===== -->
-
-      <!-- 1. Capture Stories (dup) -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="Capture Stories">
-        <svg viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto">
-          <text x="10" y="58" font-family="'Georgia', 'Times New Roman', serif" font-size="52"
-                font-style="italic" font-weight="700" fill="white" letter-spacing="-2">Capture</text>
-          <text x="52" y="78" font-family="'Arial', sans-serif" font-size="13"
-                font-weight="600" letter-spacing="6" fill="white" opacity="0.85">STORIES</text>
-        </svg>
-      </div>
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
-
-      <!-- 2. Heaven Production (dup) -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="Heaven Production">
-        <svg viewBox="0 0 260 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto">
-          <defs>
-            <linearGradient id="bp-wing-grad2" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#E0D8C8"/>
-              <stop offset="100%" stop-color="#8A8070"/>
-            </linearGradient>
-          </defs>
-          <path d="M8,48 C15,30 28,22 42,28 C34,35 28,42 26,52 C20,46 14,44 8,48Z" fill="url(#bp-wing-grad2)" opacity="0.9"/>
-          <path d="M12,52 C22,36 38,28 52,34 C42,40 36,48 34,58 C26,50 18,48 12,52Z" fill="url(#bp-wing-grad2)" opacity="0.75"/>
-          <path d="M18,56 C30,42 46,36 60,40 C50,46 44,54 42,62 C34,56 26,52 18,56Z" fill="url(#bp-wing-grad2)" opacity="0.6"/>
-          <path d="M252,48 C245,30 232,22 218,28 C226,35 232,42 234,52 C240,46 246,44 252,48Z" fill="url(#bp-wing-grad2)" opacity="0.9"/>
-          <path d="M248,52 C238,36 222,28 208,34 C218,40 224,48 226,58 C234,50 242,48 248,52Z" fill="url(#bp-wing-grad2)" opacity="0.75"/>
-          <path d="M242,56 C230,42 214,36 200,40 C210,46 216,54 218,62 C226,56 234,52 242,56Z" fill="url(#bp-wing-grad2)" opacity="0.6"/>
-          <ellipse cx="130" cy="18" rx="14" ry="5" stroke="#E0D8C8" stroke-width="2" fill="none" opacity="0.8"/>
-          <text x="130" y="55" text-anchor="middle" font-family="'Georgia', 'Palatino', serif" font-size="32"
-                font-style="italic" font-weight="700" fill="#EEE8D8" letter-spacing="1">Heaven</text>
-          <text x="130" y="72" text-anchor="middle" font-family="'Arial', sans-serif" font-size="11"
-                font-weight="800" letter-spacing="5" fill="#E0D8C8" opacity="0.85">PRODUCTION</text>
-        </svg>
-      </div>
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
-
-      <!-- 3. Art & Culture Bihar (dup) -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="Art & Culture Department, Govt. of Bihar">
-        <svg viewBox="0 0 220 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto">
-          <defs>
-            <linearGradient id="bp-bihar-gold2" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#D4AF37"/>
-              <stop offset="100%" stop-color="#C17F24"/>
-            </linearGradient>
-          </defs>
-          <g transform="translate(18, 5)">
-            <rect x="16" y="50" width="18" height="5" rx="1" fill="url(#bp-bihar-gold2)"/>
-            <rect x="21" y="20" width="8" height="32" rx="1" fill="url(#bp-bihar-gold2)"/>
-            <ellipse cx="25" cy="20" rx="12" ry="5" fill="url(#bp-bihar-gold2)"/>
-            <rect x="14" y="14" width="22" height="6" rx="1" fill="url(#bp-bihar-gold2)"/>
-            <path d="M10,14 Q14,6 18,10 Q14,12 10,14Z" fill="url(#bp-bihar-gold2)"/>
-            <path d="M40,14 Q36,6 32,10 Q36,12 40,14Z" fill="url(#bp-bihar-gold2)"/>
-            <circle cx="25" cy="8" r="5" stroke="url(#bp-bihar-gold2)" stroke-width="1.5" fill="none"/>
-            <line x1="25" y1="3" x2="25" y2="13" stroke="url(#bp-bihar-gold2)" stroke-width="1"/>
-            <line x1="20" y1="8" x2="30" y2="8" stroke="url(#bp-bihar-gold2)" stroke-width="1"/>
-          </g>
-          <text x="72" y="32" font-family="'Noto Sans Devanagari', 'Arial Unicode MS', sans-serif"
-                font-size="13" font-weight="600" fill="url(#bp-bihar-gold2)" letter-spacing="0.5">कला एवं संस्कृति विभाग</text>
-          <text x="72" y="50" font-family="'Arial', sans-serif" font-size="11" font-weight="600" fill="white" opacity="0.9" letter-spacing="0.3">Art &amp; Culture Dept.</text>
-          <text x="72" y="65" font-family="'Arial', sans-serif" font-size="10" fill="white" opacity="0.6" letter-spacing="0.3">Govt. of Bihar</text>
-          <line x1="72" y1="72" x2="210" y2="72" stroke="url(#bp-bihar-gold2)" stroke-width="0.8" opacity="0.4"/>
-        </svg>
-      </div>
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
-
-      <!-- 4. BackBenchers Ent. (dup) -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="BackBenchers Entertainment">
-        <svg viewBox="0 0 180 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-14 w-auto">
-          <defs>
-            <linearGradient id="bp-bb-grad2" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#888888"/>
-              <stop offset="100%" stop-color="#222233"/>
-            </linearGradient>
-          </defs>
-          <g transform="translate(12, 6)">
-            <rect x="0" y="0" width="6" height="54" rx="2" fill="#444"/>
-            <rect x="1" y="4"  width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="11" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="18" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="25" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="32" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="39" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="46" width="4" height="3" rx="1" fill="#111"/>
-            <text x="6" y="46" font-family="'Arial Black', Impact, sans-serif" font-size="52" font-weight="900" fill="url(#bp-bb-grad2)">B</text>
-          </g>
-          <g transform="translate(86, 6)">
-            <rect x="0" y="0" width="6" height="54" rx="2" fill="#444"/>
-            <rect x="1" y="4"  width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="11" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="18" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="25" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="32" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="39" width="4" height="3" rx="1" fill="#111"/>
-            <rect x="1" y="46" width="4" height="3" rx="1" fill="#111"/>
-            <text x="6" y="46" font-family="'Arial Black', Impact, sans-serif" font-size="52" font-weight="900" fill="url(#bp-bb-grad2)">B</text>
-          </g>
-          <text x="90" y="82" text-anchor="middle" font-family="'Arial Black', Impact, sans-serif" font-size="10"
-                font-weight="900" letter-spacing="2" fill="white">BACKBENCHERS ENT.</text>
-        </svg>
-      </div>
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
-
-      <!-- 5. The Shades (dup) -->
-      <div class="brand-logo-item flex-shrink-0 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-default" title="The Shades">
-        <svg viewBox="0 0 260 70" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-12 w-auto">
-          <defs>
-            <filter id="bp-shades-rough2" x="-5%" y="-5%" width="110%" height="110%">
-              <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="2" result="noise"/>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>
-          </defs>
-          <text x="12" y="52" font-family="'Impact', 'Arial Black', sans-serif"
-                font-size="46" font-weight="900" font-style="italic"
-                letter-spacing="3" fill="#C8C8C8" filter="url(#bp-shades-rough2)">THE SHADES</text>
-          <line x1="12" y1="58" x2="248" y2="58" stroke="#C8C8C8" stroke-width="2" opacity="0.3" filter="url(#bp-shades-rough2)"/>
-        </svg>
-      </div>
-      <div class="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-neon-yellow/40" aria-hidden="true"></div>
-
-    </div><!-- end track -->
-  </div><!-- end wrapper -->
+    </div>
+  </div>
 
 </section>
 
 <style>
-.brand-marquee-wrapper {
-  width: 100%;
-}
+.brand-marquee-outer { width: 100%; }
 
 .brand-marquee-track {
   display: flex;
   align-items: center;
   gap: 4rem;
   width: max-content;
-  animation: brand-scroll 28s linear infinite;
   will-change: transform;
+  animation: brand-scroll 30s linear infinite;
 }
 
-.brand-marquee-track:hover {
-  animation-play-state: paused;
-}
+.brand-marquee-track:hover { animation-play-state: paused; }
 
 @keyframes brand-scroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
-.brand-logo-item svg {
-  filter: brightness(0.85) contrast(1.05);
-  transition: filter 0.3s ease;
+.brand-logo-item {
+  opacity: 0.65;
+  transition: opacity 0.3s ease;
 }
+.brand-logo-item:hover { opacity: 1; }
+.brand-logo-item svg  { transition: filter 0.3s ease; }
 .brand-logo-item:hover svg {
-  filter: brightness(1.15) contrast(1.1) drop-shadow(0 0 8px rgba(255,200,0,0.3));
+  filter: brightness(1.2) drop-shadow(0 0 8px rgba(255,200,0,0.3));
 }
+
+.brand-fade-left  { background: linear-gradient(to right, #050505 0%, transparent 100%); }
+.brand-fade-right { background: linear-gradient(to left,  #050505 0%, transparent 100%); }
 </style>
+
+<script>
+// Clone the track content once at runtime for the seamless infinite loop
+// This avoids doubling the HTML at build time (prevents OOM on Vercel)
+(function() {
+  const track = document.getElementById('brand-marquee-track');
+  if (!track) return;
+  // Clone all children and append so scroll can loop at exactly 50%
+  const children = Array.from(track.children);
+  children.forEach(child => track.appendChild(child.cloneNode(true)));
+})();
+</script>
