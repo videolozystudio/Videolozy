@@ -8,12 +8,8 @@
     
     <!-- Logo wrapper for parallax -->
     <div id="splash-logo-container" class="relative z-10 p-8">
-      <img 
-        src="/assets/images/logo.png" 
-        alt="Videolozy Logo" 
-        class="w-48 h-auto drop-shadow-[0_0_20px_rgba(255,230,0,0.5)] transition-transform duration-100 ease-out"
-        id="splash-logo"
-      />
+      {% assign logo_size = "splash" %}
+      {% include "components/logo.liquid" %}
     </div>
   </div>
 </div>
@@ -21,39 +17,41 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const splash = document.getElementById('splash-screen');
-  const splashLogo = document.getElementById('splash-logo');
   const container = document.getElementById('splash-logo-container');
-  
-  if (!splash || !splashLogo) return;
+
+  if (!splash || !container) return;
+
+  let cx = 0, cy = 0, tx = 0, ty = 0;
+  let rafId;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
 
   // Parallax effect on mouse move
   const handleMouseMove = (e) => {
-    const { clientX, clientY } = e;
-    const { innerWidth, innerHeight } = window;
-    
-    // Calculate mouse position relative to center (-1 to 1)
-    const x = (clientX / innerWidth - 0.5) * 2;
-    const y = (clientY / innerHeight - 0.5) * 2;
-    
-    // Apply transform to logo
-    const moveX = x * 30; // Max movement in px
-    const moveY = y * 30;
-    
-    splashLogo.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+    const x = (e.clientX / window.innerWidth  - 0.5) * 2;
+    const y = (e.clientY / window.innerHeight - 0.5) * 2;
+    tx = x * 35;
+    ty = y * 35;
   };
 
-  window.addEventListener('mousemove', handleMouseMove);
+  function tick() {
+    cx = lerp(cx, tx, 0.06);
+    cy = lerp(cy, ty, 0.06);
+    container.style.transform = `translate(${cx}px, ${cy}px)`;
+    rafId = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('mousemove', handleMouseMove, { passive: true });
+  rafId = requestAnimationFrame(tick);
 
   // Hide splash screen after a delay
   setTimeout(() => {
-    // Fade out
     splash.style.opacity = '0';
-    
-    // Remove from DOM after fade out completes
     setTimeout(() => {
       splash.style.display = 'none';
+      cancelAnimationFrame(rafId);
       window.removeEventListener('mousemove', handleMouseMove);
-    }, 1000); // matches the transition-opacity duration-1000
-  }, 2000); // 2 second delay before starting to fade out
+    }, 1000);
+  }, 2500);
 });
 </script>

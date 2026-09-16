@@ -55,12 +55,8 @@ permalink: /
       data-parallax-speed="0.04"
     >
       <a href="/" aria-label="Videolozy — Home" class="inline-flex flex-col items-center gap-2 group">
-        <img 
-          src="/assets/images/logo.png" 
-          alt="Videolozy Logo" 
-          class="w-auto h-24 sm:h-32 drop-shadow-[0_0_18px_rgba(255,230,0,0.4)] group-hover:drop-shadow-[0_0_28px_rgba(255,230,0,0.65)] transition-all duration-500" 
-          aria-hidden="true" 
-        />
+        {% assign logo_size = "hero" %}
+        {% include "components/logo.liquid" %}
       </a>
     </div>
 

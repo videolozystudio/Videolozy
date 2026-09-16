@@ -24,23 +24,9 @@
         aria-label="{{ site.name }} — Home"
         id="site-logo"
       >
-        <!-- Image Logo -->
-        <img 
-          src="/assets/images/logo.png" 
-          alt="Videolozy Logo" 
-          class="w-auto h-9 flex-shrink-0 group-hover:drop-shadow-[0_0_10px_rgba(255,230,0,0.55)] transition-all duration-300"
-          aria-hidden="true"
-        />
-
-        <!-- Wordmark -->
-        <div class="leading-none">
-          <span class="block text-base font-extrabold text-white tracking-tight">
-            {{ site.brand }}
-          </span>
-          <span class="block text-2xs text-gray-400 font-medium tracking-widest uppercase">
-            Audio &amp; Video Production
-          </span>
-        </div>
+        <!-- SVG Logo Component -->
+        {% assign logo_size = "header" %}
+        {% include "components/logo.liquid" %}
       </a>
 
       <!-- Desktop Navigation -->
