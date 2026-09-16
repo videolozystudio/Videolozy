@@ -49,6 +49,14 @@ export function brandStrip() {
       name: "Golden Lion Motion Pictures",
       img: '<img src="/assets/images/brands/golden-lion.jpg" alt="Golden Lion Motion Pictures" class="h-14 w-auto object-contain rounded-md" />',
     },
+    {
+      name: "Pro Care Hospital",
+      img: '<img src="/assets/images/brands/pro-care.jpg" alt="Pro Care Hospital" class="h-14 w-auto object-contain rounded-md" />',
+    },
+    {
+      name: "Patna Book Fair",
+      img: '<img src="/assets/images/brands/patna-book-fair.jpg" alt="Patna Book Fair" class="h-14 w-auto object-contain rounded-md" />',
+    },
   ];
 
   const items = brands
