@@ -10,6 +10,7 @@ export default {
     "!./src/_includes/components/brand-strip.liquid",
     "!./src/_includes/components/splash-screen.liquid",
     "./.eleventy.js",
+    "./svgShortcodes.js",
   ],
   darkMode: "class",
   theme: {
