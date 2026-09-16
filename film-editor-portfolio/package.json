@@ -9,8 +9,8 @@
     "watch:eleventy": "node --max-old-space-size=4096 node_modules/@11ty/eleventy/cmd.cjs --serve --incremental",
     "watch:css": "tailwindcss -i ./src/assets/css/styles.css -o ./_site/assets/css/styles.css --watch",
     "build": "npm run build:css && npm run build:eleventy",
-    "build:css": "node --max-old-space-size=512 node_modules/tailwindcss/lib/cli.js -i ./src/assets/css/styles.css -o ./_site/assets/css/styles.css --minify",
-    "build:eleventy": "node --max-old-space-size=512 node_modules/@11ty/eleventy/cmd.cjs",
+    "build:css": "npx tailwindcss -i ./src/assets/css/styles.css -o ./_site/assets/css/styles.css --minify",
+    "build:eleventy": "node --max-old-space-size=4096 node_modules/@11ty/eleventy/cmd.cjs",
     "clean": "rimraf _site",
     "audit": "npm audit",
     "audit:ci": "npm audit --audit-level=high"
