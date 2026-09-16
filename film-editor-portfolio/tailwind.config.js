@@ -1,8 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  // Scan all Liquid templates and JS for class names
+  // Scan all Liquid templates and JS for class names.
+  // IMPORTANT: Exclude SVG-heavy component files — their inline SVG path data
+  // (e.g. "M8,48 C15,30 28,22 42,28...") causes Tailwind's class scanner to
+  // allocate gigabytes of memory and crash the build with OOM.
   content: [
     "./src/**/*.{liquid,html,njk,md,js}",
+    "!./src/_includes/components/logo.liquid",
+    "!./src/_includes/components/brand-strip.liquid",
+    "!./src/_includes/components/splash-screen.liquid",
     "./.eleventy.js",
   ],
   darkMode: "class",
@@ -359,5 +365,25 @@ export default {
     { pattern: /bg-(neon-silver|success|warning|danger|info)/ },
     { pattern: /text-(neon-silver|success|warning|danger|info)/ },
     { pattern: /border-(neon-silver|success|warning|danger|info)/ },
+
+    // Classes used in excluded SVG-heavy components (logo.liquid, brand-strip.liquid, splash-screen.liquid)
+    // These files are excluded from content scan to prevent OOM but their classes must be safelisted
+    "fixed", "inset-0", "z-[100]", "items-center", "justify-center", "bg-void",
+    "transition-opacity", "duration-1000", "relative", "w-full", "h-full",
+    "overflow-hidden", "absolute", "w-[30rem]", "h-[30rem]", "rounded-full",
+    "blur-3xl", "pointer-events-none",
+    "z-10", "p-8",
+    // Brand strip classes
+    "py-10", "border-y", "border-white/10", "text-center", "mb-6",
+    "text-2xs", "font-bold", "tracking-[0.25em]", "uppercase", "text-gray-500",
+    "inset-y-0", "left-0", "w-24", "right-0",
+    "brand-marquee-outer", "brand-marquee-track", "brand-logo-item",
+    "brand-fade-left", "brand-fade-right",
+    "flex-shrink-0", "gap-16", "w-1.5", "h-1.5", "bg-yellow-400/40",
+    "h-14", "w-auto", "h-12",
+    "opacity-65", "opacity-70", "hover:opacity-100",
+    // Logo classes
+    "drop-shadow-[0_0_14px_rgba(255,165,0,0.35)]",
+    "w-auto", "h-10", "h-48", "sm:h-56", "w-64", "sm:w-80",
   ],
 };
