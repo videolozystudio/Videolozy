@@ -9,7 +9,7 @@
 export function videolozyLogo(size) {
   const s = size || "header";
   const cls =
-    s === "hero"   ? "w-auto h-48 sm:h-56"
+    s === "hero"   ? "w-auto h-64 sm:h-80 lg:h-96 max-w-[90vw]"
   : s === "splash" ? "w-64 sm:w-80 h-auto"
   :                  "w-auto h-10";
 
