@@ -17,8 +17,7 @@ export function videolozyLogo(size) {
   // Creating a 1:1 replica of a 3D rendered image with complex gradients,
   // shading, and textures purely in SVG code is not feasible.
   // We use the exact image provided.
-  // mix-blend-screen removes the black background of the image against our dark theme.
-  return `<img src="/assets/images/videolozy-logo.jpg" alt="Videolozy Logo" class="${cls} object-contain mix-blend-screen" />`;
+  return `<img src="/assets/images/videolozy-logo.png" alt="Videolozy Logo" class="${cls} object-contain" />`;
 }
 
 /** Infinite scrolling brand collaboration strip */
