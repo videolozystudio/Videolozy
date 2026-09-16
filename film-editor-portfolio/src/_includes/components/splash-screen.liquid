@@ -16,40 +16,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const splash = document.getElementById('splash-screen');
-  const container = document.getElementById('splash-logo-container');
-
-  if (!splash || !container) return;
-
-  let cx = 0, cy = 0, tx = 0, ty = 0;
-  let rafId;
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
-  // Parallax effect on mouse move
-  const handleMouseMove = (e) => {
-    const x = (e.clientX / window.innerWidth  - 0.5) * 2;
-    const y = (e.clientY / window.innerHeight - 0.5) * 2;
-    tx = x * 35;
-    ty = y * 35;
-  };
-
-  function tick() {
-    cx = lerp(cx, tx, 0.06);
-    cy = lerp(cy, ty, 0.06);
-    container.style.transform = `translate(${cx}px, ${cy}px)`;
-    rafId = requestAnimationFrame(tick);
-  }
-
-  window.addEventListener('mousemove', handleMouseMove, { passive: true });
-  rafId = requestAnimationFrame(tick);
+  
+  if (!splash) return;
 
   // Hide splash screen after a delay
   setTimeout(() => {
     splash.style.opacity = '0';
     setTimeout(() => {
       splash.style.display = 'none';
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('mousemove', handleMouseMove);
     }, 1000);
   }, 2500);
 });

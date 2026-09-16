@@ -350,37 +350,6 @@ permalink: /
   const heroSection = document.getElementById('hero');
   if (!heroSection) return;
 
-  const parallaxEls = heroSection.querySelectorAll('[data-parallax-speed]');
-  if (!parallaxEls.length) return;
 
-  let cx = 0, cy = 0, tx = 0, ty = 0;
-  let rafId = null;
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
-  function onMouseMove(e) {
-    const rect = heroSection.getBoundingClientRect();
-    const mx = (e.clientX - rect.left) / rect.width  - 0.5;
-    const my = (e.clientY - rect.top)  / rect.height - 0.5;
-    tx = mx;
-    ty = my;
-  }
-
-  function tick() {
-    cx = lerp(cx, tx, 0.07);
-    cy = lerp(cy, ty, 0.07);
-
-    parallaxEls.forEach(el => {
-      const speed = parseFloat(el.dataset.parallaxSpeed) || 0.04;
-      const ox = cx * speed * 120;
-      const oy = cy * speed * 80;
-      el.style.transform = `translate(${ox}px, ${oy}px)`;
-    });
-
-    rafId = requestAnimationFrame(tick);
-  }
-
-  heroSection.addEventListener('mousemove', onMouseMove, { passive: true });
-  rafId = requestAnimationFrame(tick);
 })();
 </script>
