@@ -50,7 +50,7 @@ export function brandStrip() {
   const items = brands
     .map(
       (b) =>
-        `<div class="brand-logo-item flex-shrink-0 flex items-center justify-center" role="listitem" title="${b.name}">${b.img}</div>${dot}`
+        `<div class="brand-logo-item flex-shrink-0 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300" role="button" aria-label="View ${b.name}" data-brand-name="${b.name}" data-brand-img='${b.img.replace(/'/g, "&apos;")}'>${b.img}</div>${dot}`
     )
     .join("");
 
@@ -59,22 +59,63 @@ export function brandStrip() {
     `.brand-marquee-track{display:flex;align-items:center;gap:4rem;width:max-content;will-change:transform;animation:brand-scroll 30s linear infinite}`,
     `.brand-marquee-track:hover{animation-play-state:paused}`,
     `@keyframes brand-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}`,
-    `.brand-logo-item{opacity:.65;transition:opacity .3s ease}`,
-    `.brand-logo-item:hover{opacity:1}`,
-    `.brand-fade-left{background:linear-gradient(to right,#050505,transparent)}`,
-    `.brand-fade-right{background:linear-gradient(to left,#050505,transparent)}`,
+    `.brand-logo-item{opacity:.65;transition:all .3s ease}`,
+    `.brand-logo-item:hover{opacity:1;filter:drop-shadow(0 0 10px rgba(0,229,255,0.5))}`,
+    `.brand-fade-left{background:linear-gradient(to right,#001226,transparent)}`,
+    `.brand-fade-right{background:linear-gradient(to left,#001226,transparent)}`,
+    `#brand-modal.show{opacity:1;pointer-events:auto;}`,
+    `#brand-modal.show #brand-modal-card{transform:scale(1) perspective(1000px) rotateX(0) rotateY(0);}`,
   ].join("");
 
-  const js = `(function(){var t=document.getElementById('brand-marquee-track');if(!t)return;Array.from(t.children).forEach(function(c){t.appendChild(c.cloneNode(true))});})();`;
+  const js = `(function(){
+    var t=document.getElementById('brand-marquee-track');
+    if(!t)return;
+    Array.from(t.children).forEach(function(c){t.appendChild(c.cloneNode(true))});
+    
+    var m = document.getElementById('brand-modal');
+    var mc = document.getElementById('brand-modal-card');
+    var mcontent = document.getElementById('brand-modal-content');
+    
+    document.body.addEventListener('click', function(e) {
+      var item = e.target.closest('.brand-logo-item');
+      if(item) {
+        mcontent.innerHTML = '<div class="mb-6">' + item.getAttribute('data-brand-img') + '</div><h3 class="text-2xl font-bold text-white">' + item.getAttribute('data-brand-name') + '</h3>';
+        m.classList.add('show');
+      } else if (e.target.closest('#brand-modal-close') || e.target === m) {
+        m.classList.remove('show');
+      }
+    });
+
+    mc.addEventListener('mousemove', function(e) {
+      var rect = mc.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      var xPct = (x / rect.width - 0.5) * 20; // -10 to 10 deg
+      var yPct = (y / rect.height - 0.5) * -20;
+      mc.style.transform = 'scale(1) perspective(1000px) rotateY(' + xPct + 'deg) rotateX(' + yPct + 'deg)';
+    });
+    mc.addEventListener('mouseleave', function() {
+      mc.style.transform = 'scale(1) perspective(1000px) rotateY(0deg) rotateX(0deg)';
+    });
+  })();`;
 
   return [
-    `<section class="py-10 relative overflow-hidden border-y border-white/10" aria-label="Brand collaborations">`,
-    `<div class="text-center mb-6"><span class="text-2xs font-bold tracking-[0.25em] uppercase text-gray-500">Trusted Collaborations</span></div>`,
+    `<section class="py-10 relative overflow-hidden border-y border-cyan-500/30" style="background: radial-gradient(ellipse at center, #00284d 0%, #001226 100%);" aria-label="Brand collaborations">`,
+    `<div class="text-center mb-6"><span class="text-2xs font-bold tracking-[0.25em] uppercase text-cyan-400">Trusted Collaborations</span></div>`,
     `<div class="brand-fade-left absolute inset-y-0 left-0 w-24 z-10 pointer-events-none" aria-hidden="true"></div>`,
     `<div class="brand-fade-right absolute inset-y-0 right-0 w-24 z-10 pointer-events-none" aria-hidden="true"></div>`,
     `<div class="brand-marquee-outer overflow-hidden" role="list" aria-label="Collaborating brands">`,
     `<div id="brand-marquee-track" class="brand-marquee-track flex items-center gap-16">${items}</div>`,
     `</div>`,
+    `
+    <div id="brand-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+      <div id="brand-modal-card" class="white-glass-card rounded-2xl p-10 max-w-lg w-[90%] transform scale-90 transition-transform duration-200 ease-out relative shadow-[0_0_40px_rgba(0,229,255,0.3)] border border-cyan-500/50">
+         <button id="brand-modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl font-bold leading-none">&times;</button>
+         <div id="brand-modal-content" class="relative z-10 text-center flex flex-col items-center">
+         </div>
+      </div>
+    </div>
+    `,
     `<style>${css}</style>`,
     `<script>${js}<\/script>`,
     `</section>`,
