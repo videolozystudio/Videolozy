@@ -65,6 +65,7 @@ export function brandStrip() {
     `.brand-fade-right{background:linear-gradient(to left,#001226,transparent)}`,
     `#brand-modal.show{opacity:1;pointer-events:auto;}`,
     `#brand-modal.show #brand-modal-card{transform:scale(1) perspective(1000px) rotateX(0) rotateY(0);}`,
+    `#brand-modal-content img { height: 16rem !important; max-height: 40vh; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain; }`
   ].join("");
 
   const js = `(function(){
