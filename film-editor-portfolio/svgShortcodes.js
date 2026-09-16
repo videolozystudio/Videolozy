@@ -17,7 +17,7 @@ export function videolozyLogo(size) {
   // Creating a 1:1 replica of a 3D rendered image with complex gradients,
   // shading, and textures purely in SVG code is not feasible.
   // We use the exact image provided.
-  return `<img src="/assets/images/videolozy-logo.png" alt="Videolozy Logo" class="${cls} object-contain" />`;
+  return `<img src="/assets/images/videolozy-logo.png" alt="Videolozy Logo" class="${cls} object-contain" style="image-rendering: high-quality; image-rendering: -webkit-optimize-contrast;" />`;
 }
 
 /** Infinite scrolling brand collaboration strip */
