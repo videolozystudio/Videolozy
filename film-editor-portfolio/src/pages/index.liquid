@@ -14,7 +14,13 @@ permalink: /
   id="hero"
 >
   <!-- Background Layers -->
-  <div class="absolute inset-0 bg-neon-silver"></div>
+  <div class="absolute inset-0 bg-void"></div>
+  
+  <!-- Image Background with Parallax Pan -->
+  <div 
+    class="absolute inset-0 bg-[url('/assets/images/hero-bg.jpg')] bg-cover bg-center opacity-40 animate-parallax-bg pointer-events-none"
+    style="transform-origin: center center;"
+  ></div>
 
   <!-- Multi-Layered Floating Parallax Ambient Orbs -->
   <!-- Orb 1: Neon Yellow Orb Top Left -->
@@ -63,16 +69,16 @@ permalink: /
     <h1
       id="hero-headline"
       class="hero-parallax-text text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-3
-             animate-fade-in text-black"
+             animate-fade-in text-white"
       style="animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards;"
       data-parallax-speed="0.06"
     >
-      VIDEOLOZY
+      <span class="block text-white mb-2">VIDEOLOZY</span>
     </h1>
 
     <!-- Subtitle Line -->
     <h2
-      class="hero-parallax-text text-base sm:text-lg font-semibold tracking-[0.28em] uppercase text-gray-700 mb-4 animate-fade-in"
+      class="hero-parallax-text text-base sm:text-lg font-semibold tracking-[0.28em] uppercase text-gray-400 mb-4 animate-fade-in"
       style="animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards;"
       data-parallax-speed="0.05"
     >
@@ -81,7 +87,7 @@ permalink: /
 
     <!-- Tagline Line 3 -->
     <p
-      class="hero-parallax-text max-w-xl mx-auto text-base sm:text-lg text-gray-800 font-light leading-relaxed mb-10 animate-fade-in"
+      class="hero-parallax-text max-w-xl mx-auto text-base sm:text-lg text-gray-300 font-light leading-relaxed mb-10 animate-fade-in"
       style="animation-delay: 0.3s; opacity: 0; animation-fill-mode: forwards;"
       data-parallax-speed="0.035"
     >

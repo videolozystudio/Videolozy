@@ -149,6 +149,10 @@ export default {
           from: { transform: "rotate(0deg)" },
           to:   { transform: "rotate(360deg)" },
         },
+        "parallax-bg": {
+          "0%, 100%": { transform: "scale(1.1) translate(0, 0)" },
+          "50%":      { transform: "scale(1.1) translate(-2.5%, 1.5%)" },
+        },
       },
       animation: {
         "fade-in":       "fade-in 0.6s ease-out forwards",
@@ -160,6 +164,7 @@ export default {
         "float":         "float 6s ease-in-out infinite",
         "glow-line":     "glow-line 0.8s ease-out forwards",
         "spin-slow":     "spin-slow 3s linear infinite",
+        "parallax-bg":   "parallax-bg 30s ease-in-out infinite",
       },
 
       // -----------------------------------------------------------------------
