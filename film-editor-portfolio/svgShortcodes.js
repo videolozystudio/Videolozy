@@ -11,7 +11,7 @@ export function videolozyLogo(size) {
   const cls =
     s === "hero"   ? "w-auto h-64 sm:h-80 lg:h-96 max-w-[90vw]"
   : s === "splash" ? "w-64 sm:w-80 h-auto"
-  :                  "w-auto h-10";
+  :                  "w-auto h-16 sm:h-20";
 
   // Replaced manual SVG paths with the actual uploaded logo image.
   // Creating a 1:1 replica of a 3D rendered image with complex gradients,
