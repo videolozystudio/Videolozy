@@ -73,8 +73,8 @@ export function brandStrip() {
     `@keyframes brand-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}`,
     `.brand-logo-item{opacity:.65;transition:all .3s ease}`,
     `.brand-logo-item:hover{opacity:1;filter:drop-shadow(0 0 10px rgba(0,229,255,0.5))}`,
-    `.brand-fade-left{background:linear-gradient(to right,#001226,transparent)}`,
-    `.brand-fade-right{background:linear-gradient(to left,#001226,transparent)}`,
+    `.brand-fade-left{background:linear-gradient(to right,#050505,transparent)}`,
+    `.brand-fade-right{background:linear-gradient(to left,#050505,transparent)}`,
     `#brand-modal.show{opacity:1;pointer-events:auto;}`,
     `#brand-modal.show #brand-modal-card{transform:scale(1) perspective(1000px) rotateX(0) rotateY(0);}`,
     `#brand-modal-content img { height: 10rem !important; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain; }`,
@@ -114,8 +114,8 @@ export function brandStrip() {
   })();`;
 
   return [
-    `<section class="py-10 relative overflow-hidden border-y border-cyan-500/30" style="background: radial-gradient(ellipse at center, #00284d 0%, #001226 100%);" aria-label="Brand collaborations">`,
-    `<div class="text-center mb-6"><span class="text-2xs font-bold tracking-[0.25em] uppercase text-cyan-400">Trusted Collaborations</span></div>`,
+    `<section class="py-6 relative overflow-hidden" aria-label="Brand collaborations">`,
+    `<div class="text-center mb-6"><span class="text-2xs font-bold tracking-[0.25em] uppercase text-gray-500">Trusted Clients</span></div>`,
     `<div class="brand-fade-left absolute inset-y-0 left-0 w-16 sm:w-24 z-10 pointer-events-none" aria-hidden="true"></div>`,
     `<div class="brand-fade-right absolute inset-y-0 right-0 w-16 sm:w-24 z-10 pointer-events-none" aria-hidden="true"></div>`,
     `<div class="brand-marquee-outer overflow-hidden" role="list" aria-label="Collaborating brands">`,
