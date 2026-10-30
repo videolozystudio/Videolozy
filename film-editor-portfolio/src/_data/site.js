@@ -42,9 +42,15 @@ export default {
 
   // Supabase public config (safe to expose — protected by RLS)
   supabase: {
-    url:     process.env.SUPABASE_URL      || "",
-    anonKey: process.env.SUPABASE_ANON_KEY || "",
+    url:     (process.env.SUPABASE_URL || "")
+               .trim()
+               .replace(/^["']|["']$/g, "")
+               .replace(/\/+$/, "")
+               .replace(/\/(rest|auth|storage)\/v\d+.*$/i, "")
+               .replace(/\/+$/, ""),
+    anonKey: (process.env.SUPABASE_ANON_KEY || "").trim().replace(/^["']|["']$/g, ""),
   },
+
 
   // PostHog analytics (safe to expose — it's a write-only key)
   posthog: {

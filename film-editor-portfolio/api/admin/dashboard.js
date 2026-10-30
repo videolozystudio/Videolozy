@@ -8,15 +8,18 @@
 //   [A09] Centralized safe error handler — no internal leaks on 500s
 // =============================================================================
 
-import { createClient }        from "@supabase/supabase-js";
-import { applyCors }           from "../lib/cors.js";
-import { checkAuthRateLimit }  from "../lib/authRateLimiter.js";
-import { sendError }           from "../lib/errorHandler.js";
+import { createClient }           from "@supabase/supabase-js";
+import { applyCors }              from "../lib/cors.js";
+import { checkAuthRateLimit }     from "../lib/authRateLimiter.js";
+import { sendError }              from "../lib/errorHandler.js";
+import { getSanitizedSupabaseUrl } from "../lib/supabaseUrl.js";
 
 function getServiceClient() {
+  const url = getSanitizedSupabaseUrl();
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim().replace(/^["']|["']$/g, "");
   return createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    url,
+    key,
     { auth: { persistSession: false } }
   );
 }
@@ -25,9 +28,11 @@ async function authenticate(req) {
   const token = (req.headers["authorization"] || "").replace(/^Bearer\s+/i, "").trim();
   if (!token) throw Object.assign(new Error("Missing authorization token."), { status: 401 });
 
+  const url = getSanitizedSupabaseUrl();
+  const anonKey = (process.env.SUPABASE_ANON_KEY || "").trim().replace(/^["']|["']$/g, "");
   const anonClient = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY,
+    url,
+    anonKey,
     { auth: { persistSession: false } }
   );
 

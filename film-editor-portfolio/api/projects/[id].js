@@ -10,9 +10,11 @@
 //   [A10] thumbnail_url restricted to known video CDN hostnames (SSRF prevention)
 // =============================================================================
 
-import { createClient } from "@supabase/supabase-js";
-import { applyCors }    from "../lib/cors.js";
-import { sendError }    from "../lib/errorHandler.js";
+import { createClient }           from "@supabase/supabase-js";
+import { applyCors }              from "../lib/cors.js";
+import { sendError }              from "../lib/errorHandler.js";
+import { DEFAULT_PROJECTS }       from "../lib/defaultProjects.js";
+import { getSanitizedSupabaseUrl } from "../lib/supabaseUrl.js";
 
 // ---------------------------------------------------------------------------
 // Allowed thumbnail URL hostnames (SSRF guard — A10)
@@ -45,11 +47,10 @@ function validateThumbnailUrl(raw) {
 }
 
 function getServerClient(useServiceRole = false) {
-  return createClient(
-    process.env.SUPABASE_URL,
-    useServiceRole ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.SUPABASE_ANON_KEY,
-    { auth: { persistSession: false } }
-  );
+  const url = getSanitizedSupabaseUrl();
+  const key = (useServiceRole ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.SUPABASE_ANON_KEY)
+    ?.trim().replace(/^["']|["']$/g, "");
+  return createClient(url, key, { auth: { persistSession: false } });
 }
 
 async function authenticate(req) {
@@ -80,9 +81,10 @@ export default async function handler(req, res) {
 
   const { id } = req.query;
 
-  // [A04] Validate UUID format
+  // [A04] Validate UUID format or demo showcase ID
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  if (!id || !UUID_RE.test(id)) {
+  const isDemo = typeof id === "string" && id.startsWith("demo-showcase-");
+  if (!id || (!UUID_RE.test(id) && !isDemo)) {
     return res.status(400).json({ error: "Invalid or missing project ID." });
   }
 
@@ -91,16 +93,35 @@ export default async function handler(req, res) {
     // GET /api/projects/:id — Public
     // ------------------------------------------------------------------
     if (req.method === "GET") {
-      const { data, error } = await getServerClient(false)
-        .from("projects")
-        .select("*")
-        .eq("id", id)
-        .single();
+      if (isDemo) {
+        const demo = DEFAULT_PROJECTS.find((p) => p.id === id);
+        if (demo) return res.status(200).json({ data: demo });
+        return res.status(404).json({ error: "Project not found." });
+      }
 
-      if (error?.code === "PGRST116") return res.status(404).json({ error: "Project not found." });
-      if (error) throw error;
+      try {
+        const { data, error } = await getServerClient(false)
+          .from("projects")
+          .select("*")
+          .eq("id", id)
+          .single();
 
-      return res.status(200).json({ data });
+        if (error?.code === "PGRST116") return res.status(404).json({ error: "Project not found." });
+        if (error) throw error;
+
+        return res.status(200).json({ data });
+      } catch (dbErr) {
+        const isNetworkErr =
+          dbErr?.message?.includes("fetch failed") ||
+          dbErr?.cause?.code === "ENOTFOUND" ||
+          dbErr?.code === "ENOTFOUND";
+
+        if (isNetworkErr) {
+          const demo = DEFAULT_PROJECTS.find((p) => p.id === id);
+          if (demo) return res.status(200).json({ data: demo, fallback: true });
+        }
+        throw dbErr;
+      }
     }
 
     // ------------------------------------------------------------------

@@ -13,10 +13,11 @@
 //   [A09] Safe error handler — no internal leaks on 500s
 // =============================================================================
 
-import { createClient }       from "@supabase/supabase-js";
-import { applyCors }          from "./lib/cors.js";
-import { checkAuthRateLimit } from "./lib/authRateLimiter.js";
-import { sendError }          from "./lib/errorHandler.js";
+import { createClient }           from "@supabase/supabase-js";
+import { applyCors }              from "./lib/cors.js";
+import { checkAuthRateLimit }     from "./lib/authRateLimiter.js";
+import { sendError }              from "./lib/errorHandler.js";
+import { getSanitizedSupabaseUrl } from "./lib/supabaseUrl.js";
 
 // [A04] Field length limits
 const LIMITS = {
@@ -88,9 +89,11 @@ export default async function handler(req, res) {
     }
 
     // [A03] Parameterized insert via Supabase SDK (not raw SQL)
+    const url = getSanitizedSupabaseUrl();
+    const serviceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim().replace(/^["']|["']$/g, "");
     const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY, // service role for insert (RLS allows anon anyway, but this is explicit)
+      url,
+      serviceKey,
       { auth: { persistSession: false } }
     );
 

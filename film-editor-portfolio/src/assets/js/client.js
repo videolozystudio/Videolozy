@@ -9,10 +9,21 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // ---------------------------------------------------------------------------
 // Init Supabase from config injected by base.liquid
 // ---------------------------------------------------------------------------
-const { supabaseUrl, supabaseAnonKey } = window.__SITE_CONFIG__ || {};
+const rawConfig = window.__SITE_CONFIG__ || {};
+const rawUrl = rawConfig.supabaseUrl || "";
+const supabaseUrl = rawUrl
+  .trim()
+  .replace(/^["']|["']$/g, "")
+  .replace(/\/+$/, "")
+  .replace(/\/(rest|auth|storage)\/v\d+.*$/i, "")
+  .replace(/\/+$/, "");
+
+const supabaseAnonKey = (rawConfig.supabaseAnonKey || "").trim().replace(/^["']|["']$/g, "");
+
 const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } })
   : null;
+
 
 // ---------------------------------------------------------------------------
 // Utility: Format a number with commas

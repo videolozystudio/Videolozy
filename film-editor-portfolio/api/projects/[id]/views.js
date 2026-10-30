@@ -10,9 +10,10 @@
 //   [A09] Safe error handler — no internal detail leaks
 // =============================================================================
 
-import { createClient } from "@supabase/supabase-js";
-import { getRedis }     from "../../lib/redis.js";
-import { sendError }    from "../../lib/errorHandler.js";
+import { createClient }           from "@supabase/supabase-js";
+import { getRedis }               from "../../lib/redis.js";
+import { sendError }              from "../../lib/errorHandler.js";
+import { getSanitizedSupabaseUrl } from "../../lib/supabaseUrl.js";
 
 // ---------------------------------------------------------------------------
 // Redis-backed view deduplication
@@ -48,10 +49,15 @@ export default async function handler(req, res) {
 
   const { id } = req.query;
 
-  // [A04] Validate UUID
+  // [A04] Validate UUID or demo ID
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  if (!id || !UUID_RE.test(id)) {
+  const isDemo = typeof id === "string" && id.startsWith("demo-showcase-");
+  if (!id || (!UUID_RE.test(id) && !isDemo)) {
     return res.status(400).json({ error: "Invalid project ID." });
+  }
+
+  if (isDemo) {
+    return res.status(200).json({ message: "Demo view counted." });
   }
 
   // [A07] Redis-backed deduplication (works across all Vercel instances)
@@ -61,10 +67,13 @@ export default async function handler(req, res) {
     return res.status(200).json({ message: "View already counted recently." });
   }
 
+
   try {
+    const url = getSanitizedSupabaseUrl();
+    const key = (process.env.SUPABASE_ANON_KEY || "").trim().replace(/^["']|["']$/g, "");
     const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_ANON_KEY,
+      url,
+      key,
       { auth: { persistSession: false } }
     );
 

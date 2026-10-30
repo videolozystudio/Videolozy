@@ -9,7 +9,16 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // ---------------------------------------------------------------------------
 // Init Supabase
 // ---------------------------------------------------------------------------
-const { supabaseUrl, supabaseAnonKey } = window.__SITE_CONFIG__ || {};
+const rawConfig = window.__SITE_CONFIG__ || {};
+const rawUrl = rawConfig.supabaseUrl || "";
+const supabaseUrl = rawUrl
+  .trim()
+  .replace(/^["']|["']$/g, "")
+  .replace(/\/+$/, "")
+  .replace(/\/(rest|auth|storage)\/v\d+.*$/i, "")
+  .replace(/\/+$/, "");
+
+const supabaseAnonKey = (rawConfig.supabaseAnonKey || "").trim().replace(/^["']|["']$/g, "");
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error("[admin.js] Missing Supabase configuration.");
@@ -23,6 +32,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
   },
 });
+
 
 // ---------------------------------------------------------------------------
 // UTILITIES
@@ -168,21 +178,25 @@ function initLoginPage() {
       window.location.replace("/admin/");
 
     } catch (err) {
-      const msg = err.message?.includes("Invalid login")
-        ? "Incorrect email or password."
-        : err.message || "Sign in failed. Please try again.";
-        
+      let msg = err.message || "Sign in failed. Please try again.";
+      if (msg.includes("Invalid login")) {
+        msg = "Incorrect email or password.";
+      } else if (msg.includes("Failed to fetch") || msg.includes("NetworkError") || msg.includes("network")) {
+        msg = "Unable to connect to Supabase. Your project may be paused due to inactivity, or the SUPABASE_URL is invalid. Please restore your project in the Supabase dashboard (supabase.com/dashboard).";
+      }
+
       // Log failed login attempt to Vercel
       fetch('/api/admin/login-log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, success: false, errorMessage: msg })
       }).catch(e => console.error('Failed to send login log:', e));
-        
+
       showLoginError(msg);
     } finally {
       setLoading(btn, false);
     }
+
   });
 
   function showLoginError(msg) {

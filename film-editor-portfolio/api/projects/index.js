@@ -11,10 +11,12 @@
 //   [A10] thumbnail_url restricted to known video CDN hostnames (SSRF prevention)
 // =============================================================================
 
-import { createClient }      from "@supabase/supabase-js";
-import { checkRateLimit }    from "../lib/rateLimiter.js";
-import { applyCors }         from "../lib/cors.js";
-import { sendError }         from "../lib/errorHandler.js";
+import { createClient }           from "@supabase/supabase-js";
+import { checkRateLimit }         from "../lib/rateLimiter.js";
+import { applyCors }              from "../lib/cors.js";
+import { sendError }              from "../lib/errorHandler.js";
+import { DEFAULT_PROJECTS }       from "../lib/defaultProjects.js";
+import { getSanitizedSupabaseUrl } from "../lib/supabaseUrl.js";
 
 // ---------------------------------------------------------------------------
 // Allowed thumbnail URL hostnames (SSRF guard — A10)
@@ -52,10 +54,10 @@ function validateThumbnailUrl(raw) {
 // Supabase Client Factory
 // ---------------------------------------------------------------------------
 function getServerClient(useServiceRole = false) {
-  const url = process.env.SUPABASE_URL;
-  const key = useServiceRole
+  const url = getSanitizedSupabaseUrl();
+  const key = (useServiceRole
     ? process.env.SUPABASE_SERVICE_ROLE_KEY
-    : process.env.SUPABASE_ANON_KEY;
+    : process.env.SUPABASE_ANON_KEY)?.trim().replace(/^["']|["']$/g, "");
 
   if (!url || !key) {
     throw new Error("Supabase environment variables are not configured.");
@@ -155,18 +157,47 @@ export default async function handler(req, res) {
         query = query.eq("category", category);
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
+      try {
+        const { data, error } = await query;
+        if (error) throw error;
 
-      const nextCursor = data.length === pageSize
-        ? (data[data.length - 1]?.[safeOrder] ?? null)
-        : null;
+        const nextCursor = data.length === pageSize
+          ? (data[data.length - 1]?.[safeOrder] ?? null)
+          : null;
 
-      return res.status(200).json({
-        data,
-        count:      data.length,
-        nextCursor,
-      });
+        return res.status(200).json({
+          data,
+          count:      data.length,
+          nextCursor,
+        });
+      } catch (dbErr) {
+        const isNetworkErr =
+          dbErr?.message?.includes("fetch failed") ||
+          dbErr?.cause?.code === "ENOTFOUND" ||
+          dbErr?.code === "ENOTFOUND" ||
+          dbErr?.code === "PGRST125";
+
+        if (isNetworkErr) {
+          console.warn(
+            `[api/projects/index.js] Supabase database issue (${dbErr?.code || ""}: ${dbErr?.cause?.message || dbErr.message}). ` +
+            `Serving fallback showcase projects.`
+          );
+
+          res.setHeader("X-Database-Fallback", "true");
+          const filtered = (category && category !== "all")
+            ? DEFAULT_PROJECTS.filter((p) => p.category === category)
+            : DEFAULT_PROJECTS;
+
+          return res.status(200).json({
+            data:       filtered.slice(0, pageSize),
+            count:      filtered.length,
+            nextCursor: null,
+            fallback:   true,
+          });
+        }
+
+        throw dbErr;
+      }
     }
 
     // ------------------------------------------------------------------

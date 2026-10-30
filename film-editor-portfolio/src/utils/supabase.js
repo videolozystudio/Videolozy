@@ -9,14 +9,24 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // Client Initialization
 // These values are injected into the page via the base layout's data attributes.
 // ---------------------------------------------------------------------------
-const SUPABASE_URL     = document.documentElement.dataset.supabaseUrl     || "";
-const SUPABASE_ANON_KEY = document.documentElement.dataset.supabaseAnonKey || "";
+const rawUrl = document.documentElement.dataset.supabaseUrl || "";
+const SUPABASE_URL = rawUrl
+  .trim()
+  .replace(/^["']|["']$/g, "")
+  .replace(/\/+$/, "")
+  .replace(/\/(rest|auth|storage)\/v\d+.*$/i, "")
+  .replace(/\/+$/, "");
+
+const SUPABASE_ANON_KEY = (document.documentElement.dataset.supabaseAnonKey || "")
+  .trim()
+  .replace(/^["']|["']$/g, "");
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.warn("[Supabase] Missing configuration. Set SUPABASE_URL and SUPABASE_ANON_KEY.");
 }
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+
   auth: {
     persistSession:    true,
     autoRefreshToken:  true,

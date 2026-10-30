@@ -31,13 +31,20 @@ const SAFE_PREFIXES = [
 
 /**
  * Determines the appropriate HTTP status code from a known error.
- * @param {Error & { status?: number }} err
+ * @param {Error & { status?: number, cause?: { code?: string, message?: string }, code?: string }} err
  * @returns {number}
  */
 function resolveStatus(err) {
   if (err.status) return err.status;
 
   const msg = err.message ?? "";
+  const causeCode = err?.cause?.code ?? err?.code ?? "";
+
+  // Check for DNS failure / database unreachable / fetch failed
+  if (causeCode === "ENOTFOUND" || causeCode === "ECONNREFUSED" || msg.includes("fetch failed")) {
+    return 503;
+  }
+
   if (msg.includes("Missing authorization") || msg.includes("Invalid or expired token")) return 401;
   if (msg.includes("Insufficient permissions")) return 403;
   if (msg.includes("Project not found")) return 404;
@@ -60,12 +67,22 @@ function isSafeMessage(message) {
  * For 500-class errors, logs internally and returns a generic message.
  *
  * @param {import("http").ServerResponse} res
- * @param {Error & { status?: number }}   err
+ * @param {Error & { status?: number, cause?: any, code?: string }} err
  * @param {string} [context]  — label for server-side logs (e.g. "projects/index.js")
  */
 export function sendError(res, err, context = "api") {
   const status  = resolveStatus(err);
   const message = err.message ?? "Unknown error";
+
+  if (status === 503) {
+    console.warn(
+      `[${context}] Service Unavailable (503): Database connection failed (${err?.cause?.message || err.message}). ` +
+      `Check if your Supabase project is active/unpaused at https://supabase.com/dashboard`
+    );
+    return res.status(503).json({
+      error: "Database service temporarily unavailable. The database may be paused or unreachable.",
+    });
+  }
 
   if (status >= 500) {
     // Log full details server-side (visible in Vercel Runtime Logs)
@@ -82,3 +99,4 @@ export function sendError(res, err, context = "api") {
 
   return res.status(status).json({ error: clientMessage });
 }
+
