@@ -5,6 +5,10 @@
 // =============================================================================
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { inject } from "https://cdn.jsdelivr.net/npm/@vercel/analytics@1/+esm";
+
+// Initialize Vercel Web Analytics
+inject();
 
 // ---------------------------------------------------------------------------
 // Init Supabase
