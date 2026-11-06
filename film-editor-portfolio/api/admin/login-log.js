@@ -10,7 +10,7 @@
 //         without explicit truncation/sanitization
 // =============================================================================
 
-import { checkAuthRateLimit } from "../lib/authRateLimiter.js";
+import { checkAuthRateLimit } from "../_lib/authRateLimiter.js";
 
 // [A04] Basic email format regex — RFC 5321 simplified
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;

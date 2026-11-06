@@ -12,11 +12,11 @@
 // =============================================================================
 
 import { createClient }           from "@supabase/supabase-js";
-import { checkRateLimit }         from "../lib/rateLimiter.js";
-import { applyCors }              from "../lib/cors.js";
-import { sendError }              from "../lib/errorHandler.js";
-import { DEFAULT_PROJECTS }       from "../lib/defaultProjects.js";
-import { getSanitizedSupabaseUrl } from "../lib/supabaseUrl.js";
+import { checkRateLimit }         from "../_lib/rateLimiter.js";
+import { applyCors }              from "../_lib/cors.js";
+import { sendError }              from "../_lib/errorHandler.js";
+import { DEFAULT_PROJECTS }       from "../_lib/defaultProjects.js";
+import { getSanitizedSupabaseUrl } from "../_lib/supabaseUrl.js";
 
 // ---------------------------------------------------------------------------
 // Allowed thumbnail URL hostnames (SSRF guard — A10)

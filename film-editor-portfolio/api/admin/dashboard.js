@@ -9,10 +9,10 @@
 // =============================================================================
 
 import { createClient }           from "@supabase/supabase-js";
-import { applyCors }              from "../lib/cors.js";
-import { checkAuthRateLimit }     from "../lib/authRateLimiter.js";
-import { sendError }              from "../lib/errorHandler.js";
-import { getSanitizedSupabaseUrl } from "../lib/supabaseUrl.js";
+import { applyCors }              from "../_lib/cors.js";
+import { checkAuthRateLimit }     from "../_lib/authRateLimiter.js";
+import { sendError }              from "../_lib/errorHandler.js";
+import { getSanitizedSupabaseUrl } from "../_lib/supabaseUrl.js";
 
 function getServiceClient() {
   const url = getSanitizedSupabaseUrl();

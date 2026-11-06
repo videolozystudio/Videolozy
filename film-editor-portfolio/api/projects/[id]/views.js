@@ -11,9 +11,9 @@
 // =============================================================================
 
 import { createClient }           from "@supabase/supabase-js";
-import { getRedis }               from "../../lib/redis.js";
-import { sendError }              from "../../lib/errorHandler.js";
-import { getSanitizedSupabaseUrl } from "../../lib/supabaseUrl.js";
+import { getRedis }               from "../../_lib/redis.js";
+import { sendError }              from "../../_lib/errorHandler.js";
+import { getSanitizedSupabaseUrl } from "../../_lib/supabaseUrl.js";
 
 // ---------------------------------------------------------------------------
 // Redis-backed view deduplication
